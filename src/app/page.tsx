@@ -1,401 +1,290 @@
+// RUTA: src/app/page.tsx
+// REEMPLAZÁ el contenido actual completo con este
+"use client";
+
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Suspense } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { Reveal } from "@/components/Reveal";
-import { HomeEvents, HomeEventsSkeleton } from "@/components/HomeEvents";
-import {
-  HomeOrganizations,
-  HomeOrganizationsSkeleton,
-} from "@/components/HomeOrganizations";
-import { NewsletterForm } from "@/components/NewsletterForm";
+import Image from "next/image";
+import { supabase } from "@/lib/supabase";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-function Stat({ value, label }: { value: string; label: string }) {
+type Event = { id: string; title: string; event_date: string; location: string | null; registration_url: string | null; };
+
+function useInView(ref: React.RefObject<HTMLElement>) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold: 0.1 });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ref]);
+  return inView;
+}
+
+function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref as React.RefObject<HTMLElement>);
   return (
-    <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm">
-      <div className="text-3xl font-bold tracking-tight text-[var(--ee-primary)]">
-        {value}
-      </div>
-      <div className="mt-1 text-sm text-[var(--ee-text-secondary)]">{label}</div>
+    <div ref={ref} className={className} style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(28px)", transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms` }}>
+      {children}
     </div>
   );
 }
 
-function IconCard({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1">
-      <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--ee-bg-light)] text-[var(--ee-primary)]">
-        {icon}
-      </div>
-      <h3 className="mt-4 text-lg font-bold tracking-tight">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-[var(--ee-text-secondary)]">
-        {description}
-      </p>
-    </div>
-  );
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return {
+    day: d.toLocaleDateString("es-AR", { day: "2-digit" }),
+    month: d.toLocaleDateString("es-AR", { month: "short" }).replace(".", ""),
+  };
 }
 
-function EducationCard({
-  title,
-  description,
-  href,
-}: {
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group rounded-2xl border border-black/5 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--ee-primary)]/20"
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-base font-bold tracking-tight">{title}</h3>
-          <p className="mt-2 text-sm leading-6 text-[var(--ee-text-secondary)]">
-            {description}
-          </p>
-        </div>
-        <div className="mt-1 text-[var(--ee-primary)] transition-transform duration-300 group-hover:translate-x-0.5">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7 17L17 7"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <path
-              d="M9 7H17V15"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-    </Link>
-  );
-}
+const queHacemos = [
+  { icon: "/images/icono-1.png", text: "Brindamos información amigable sobre epilepsia" },
+  { icon: "/images/icono-2.png", text: "Brindamos capacitaciones a otras instituciones aliadas" },
+  { icon: "/images/icono-3.png", text: "Realizamos entrevistas a profesionales de la salud" },
+  { icon: "/images/icono-4.png", text: "Generamos herramientas, guías y descargables vinculados a Epilepsia" },
+  { icon: "/images/icono-5.png", text: "Organizamos eventos y congresos referidos a la temática" },
+  { icon: "/images/icono-6.png", text: "Acercamos a la comunidad a personas que investigan sobre neurología" },
+];
 
-export default async function Home() {
-  return (
-    <div className="flex min-h-full flex-col">
-      <Navbar />
+export default function Home() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [carouselIdx, setCarouselIdx] = useState(0);
 
-      {/* 1. Hero */}
-      <section className="bg-[var(--ee-dark)] text-white">
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 md:py-20">
-          <Reveal>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/90">
-              <span className="h-2 w-2 rounded-full bg-[var(--ee-primary)]" />
-              #SinEstigmas
+  useEffect(() => {
+    const now = new Date().toISOString();
+    supabase
+      .from("events")
+      .select("id,title,event_date,location,registration_url")
+      .eq("is_published", true)
+      .gt("event_date", now)
+      .order("event_date", { ascending: true })
+      .limit(6)
+      .then(({ data }) => setEvents(data ?? []));
+  }, []);
+
+  useEffect(() => {
+    if (events.length <= 1) return;
+    const t = setInterval(() => setCarouselIdx(i => (i + 1) % events.length), 4000);
+    return () => clearInterval(t);
+  }, [events]);
+
+  return (
+    <>
+      <style>{`
+        @keyframes underlineSlide {
+          0% { width: 0; left: 0; }
+          50% { width: 100%; left: 0; }
+          100% { width: 0; left: 100%; }
+        }
+        @keyframes underlinePulse {
+          0%, 100% { transform: scaleX(1); opacity: 1; }
+          50% { transform: scaleX(1.05); opacity: 0.85; }
+        }
+        .underline-anim { position: relative; display: inline-block; }
+        .underline-anim::after {
+          content: ''; position: absolute; bottom: -4px; left: 0;
+          width: 100%; height: 4px; background: #29f0b4;
+          border-radius: 2px; animation: underlinePulse 2s ease-in-out infinite;
+        }
+        .underline-anim-slide { position: relative; display: inline-block; }
+        .underline-anim-slide::after {
+          content: ''; position: absolute; bottom: -4px; left: 0;
+          height: 4px; background: #29f0b4; border-radius: 2px;
+          animation: underlineSlide 3s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+          0%, 100% { transform: scale(1); }
+          25% { transform: scale(1.08); }
+          50% { transform: scale(1); }
+          75% { transform: scale(1.04); }
+        }
+        .heart-beat { animation: heartbeat 2s ease-in-out infinite; }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .carousel-slide { animation: fadeInUp 0.5s ease; }
+      `}</style>
+
+      <main className="overflow-x-hidden">
+
+        <Navbar />
+
+        {/* HERO */}
+        <section className="min-h-screen flex items-center justify-center px-6 text-center" style={{ background: "#5c29c2" }}>
+          <div className="max-w-3xl mx-auto">
+            <div className="heart-beat inline-block mb-6">
+              <Image src="/images/icon-heart.png" alt="" width={120} height={120} className="mx-auto" />
             </div>
-          </Reveal>
-          <Reveal delayMs={80}>
-            <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-5xl">
-              Una comunidad para{" "}
-              <span className="text-[#a78bfa]">acompañar</span>, informar y
-              transformar.
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+              Bienvenidos a la comunidad de{" "}
+              <span className="underline-anim" style={{ color: "#29f0b4" }}>Espacio Epilepsia</span>
             </h1>
-          </Reveal>
-          <Reveal delayMs={140}>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-white/80 md:text-lg">
-              Recursos claros, programas y espacios de encuentro para convivir
-              con epilepsia con más información y menos estigma.
+            <p className="text-lg text-white/80 leading-relaxed max-w-2xl mx-auto mb-8">
+              Espacio Epilepsia es una plataforma digital con el objetivo de{" "}
+              <span className="underline-anim-slide font-bold text-white">informar</span>, compartir experiencias y{" "}
+              <span className="underline-anim-slide font-bold text-white">contener</span> a las personas con epilepsia, sus familiares y amigos.
             </p>
-          </Reveal>
-          <Reveal delayMs={200}>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/informacion"
-                className="inline-flex h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-semibold text-[var(--ee-dark)] transition-colors hover:bg-white/90"
-              >
-                Empezar por lo básico
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link href="/informacion"
+                className="bg-white text-[#5c29c2] font-bold px-7 py-3 rounded-full hover:bg-[#29f0b4] hover:text-white transition-all">
+                Conocé más
               </Link>
-              <Link
-                href="/comunidad"
-                className="inline-flex h-11 items-center justify-center rounded-full border border-white/25 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-              >
+              <a href="https://www.instagram.com/espacioepilepsia/" target="_blank" rel="noopener noreferrer"
+                className="bg-transparent text-white font-bold px-7 py-3 rounded-full border-2 border-white/40 hover:bg-white/10 transition-all">
                 Sumate a la comunidad
-              </Link>
+              </a>
             </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 2. Stats */}
-      <section className="bg-[var(--ee-bg-light)]">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
-          <div className="grid gap-4 md:grid-cols-3">
-            <Reveal>
-              <Stat value="50M" label="personas viven con epilepsia en el mundo" />
-            </Reveal>
-            <Reveal delayMs={80}>
-              <Stat value="70%" label="podría vivir sin crisis con tratamiento" />
-            </Reveal>
-            <Reveal delayMs={160}>
-              <Stat value="500K" label="personas conviven con epilepsia en Argentina" />
-            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 3. Qué hacemos */}
-      <section className="bg-[var(--ee-bg-light)]">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
-          <Reveal>
-            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-              Qué hacemos
-            </h2>
-          </Reveal>
-          <Reveal delayMs={80}>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ee-text-secondary)] md:text-base">
-              Un espacio digital para acceder a información confiable, conectar
-              con organizaciones y participar de actividades.
-            </p>
-          </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <Reveal>
-              <IconCard
-                title="Información clara"
-                description="Guías y recursos sobre epilepsia, mitos, primeros auxilios y acompañamiento."
-                icon={
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M8 6H21"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M8 12H21"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M8 18H21"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M3 6H4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M3 12H4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M3 18H4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                }
-              />
-            </Reveal>
-            <Reveal delayMs={80}>
-              <IconCard
-                title="Programas y apoyo"
-                description="Iniciativas para escuelas, familias y entornos de trabajo: aprender, prevenir, acompañar."
-                icon={
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 21s-7-4.35-7-11a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 6.65-7 11-7 11Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                }
-              />
-            </Reveal>
-            <Reveal delayMs={160}>
-              <IconCard
-                title="Comunidad y encuentros"
-                description="Eventos, talleres y espacios para conectar personas, equipos de salud y organizaciones."
-                icon={
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M16 11c1.657 0 3-1.343 3-3S17.657 5 16 5s-3 1.343-3 3 1.343 3 3 3Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <path
-                      d="M8 11c1.657 0 3-1.343 3-3S9.657 5 8 5 5 6.343 5 8s1.343 3 3 3Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <path
-                      d="M8 13c-2.761 0-5 1.239-5 4v2h10v-2c0-2.761-2.239-4-5-4Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <path
-                      d="M16 13c-1.57 0-2.988.4-4 1.104"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M21 19v-2c0-2.761-2.239-4-5-4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                }
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Educación */}
-      <section className="bg-[var(--ee-bg-light)]">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
-          <Reveal>
-            <div className="rounded-3xl bg-[var(--ee-bg-light)]">
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                Educación
+        {/* QUÉ HACEMOS */}
+        <section className="py-20 px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <FadeIn>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-3">
+                ¿Qué <span className="underline-anim" style={{ color: "#5c29c2" }}>hacemos?</span>
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ee-text-secondary)] md:text-base">
-                Material para aprender y compartir en familia, escuela y trabajo.
+              <p className="text-center text-gray-500 mb-12 max-w-xl mx-auto">
+                Todo lo que hacemos está orientado a mejorar la calidad de vida de las personas con epilepsia.
               </p>
+            </FadeIn>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {queHacemos.map(({ icon, text }, i) => (
+                <FadeIn key={i} delay={i * 80}>
+                  <div className="flex flex-col items-center text-center gap-4 p-4 group hover:-translate-y-1 transition-transform">
+                    <div className="w-32 h-32 flex items-center justify-center">
+                      <Image src={icon} alt={text} width={128} height={128}
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <p className="font-bold text-base text-gray-800 leading-snug">{text}</p>
+                  </div>
+                </FadeIn>
+              ))}
             </div>
-          </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            <Reveal>
-              <EducationCard
-                title="Primeros auxilios"
-                description="Qué hacer (y qué no) ante una crisis."
-                href="/informacion/primeros-auxilios"
-              />
-            </Reveal>
-            <Reveal delayMs={80}>
-              <EducationCard
-                title="Mitos y verdades"
-                description="Respuestas simples para cortar con la desinformación."
-                href="/informacion/mitos"
-              />
-            </Reveal>
-            <Reveal delayMs={160}>
-              <EducationCard
-                title="Guía para escuelas"
-                description="Recomendaciones para acompañar a estudiantes."
-                href="/programas/escuelas"
-              />
-            </Reveal>
-            <Reveal delayMs={240}>
-              <EducationCard
-                title="Derechos y acceso"
-                description="Orientación para navegar el sistema y pedir ayuda."
-                href="/informacion/derechos"
-              />
-            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 5. Eventos */}
-      <Suspense fallback={<HomeEventsSkeleton />}>
-        <HomeEvents />
-      </Suspense>
-
-      {/* 6. Organizaciones */}
-      <Suspense fallback={<HomeOrganizationsSkeleton />}>
-        <HomeOrganizations />
-      </Suspense>
-
-      {/* 7. CTA final */}
-      <section className="bg-[var(--ee-dark)] text-white">
-        <div className="mx-auto w-full max-w-6xl px-4 py-14">
-          <Reveal>
-            <div className="rounded-3xl bg-white/5 p-8 md:p-10">
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                Construyamos una Argentina sin estigmas
+        {/* CONTENCIÓN */}
+        <section className="py-20 px-6" style={{ background: "#f3f3f3" }}>
+          <div className="max-w-4xl mx-auto text-center">
+            <FadeIn>
+              <h2 className="text-3xl md:text-4xl font-extrabold mb-5">
+                Creamos espacios de{" "}
+                <span className="underline-anim" style={{ color: "#5c29c2" }}>contención</span>
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80 md:text-base">
-                Sumate a nuestras actividades, compartí información confiable y
-                ayudanos a sostener este espacio.
+              <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                Acercamos a las personas con epilepsia, creando comunidades, grupos de WhatsApp, realizando charlas en vivo en Instagram. Contamos historias de personas con epilepsia que estudian, trabajan, son madres, padres, tienen días buenos y malos ¡Cómo todos! Y muchas actividades más...
               </p>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/eventos"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-semibold text-[var(--ee-dark)] transition-colors hover:bg-white/90"
-                >
-                  Ver eventos
-                </Link>
-                <Link
-                  href="/donar"
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--ee-primary)] px-5 text-sm font-semibold text-white transition-colors hover:bg-[var(--ee-hover)]"
-                >
-                  Doná
-                </Link>
+              <a href="https://www.instagram.com/espacioepilepsia/" target="_blank" rel="noopener noreferrer"
+                className="inline-block bg-[#f97316] text-white font-bold px-8 py-3 rounded-full hover:bg-[#ea580c] transition-all text-lg">
+                ¡Sumate a la comunidad!
+              </a>
+            </FadeIn>
+          </div>
+        </section>
+
+        {/* VIDEO YOUTUBE */}
+        <section className="py-20 px-6" style={{ background: "#5c29c2" }}>
+          <div className="max-w-4xl mx-auto">
+            <FadeIn>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white text-center mb-3">
+                <span className="underline-anim-slide" style={{ color: "#29f0b4" }}>Epilepsia</span> en primera persona
+              </h2>
+              <p className="text-white/70 text-center mb-10 text-lg">
+                Un espacio para compartir información y experiencias sobre epilepsia
+              </p>
+              <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ paddingTop: "56.25%" }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/oq21HaG76kI"
+                  title="Espacio Epilepsia"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+            </FadeIn>
+          </div>
+        </section>
 
-      {/* 8. Newsletter */}
-      <section className="bg-white">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12">
-          <Reveal>
-            <div className="rounded-3xl border border-black/5 bg-[var(--ee-bg-light)] p-8 md:p-10">
-              <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                Newsletter
+        {/* CARRUSEL DE EVENTOS */}
+        <section className="py-20 px-6 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <FadeIn>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-3">
+                <span className="underline-anim" style={{ color: "#5c29c2" }}>Eventos</span>
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ee-text-secondary)] md:text-base">
-                Una vez por mes: recursos, novedades y próximos encuentros.
-              </p>
-              <NewsletterForm />
-            </div>
-          </Reveal>
-        </div>
-      </section>
+              <p className="text-gray-500 text-center mb-10">No te pierdas de nuestros próximos eventos</p>
+            </FadeIn>
 
-      <Footer />
-    </div>
+            {events.length === 0 ? (
+              <FadeIn>
+                <div className="text-center py-12 bg-[#f5f0ff] rounded-2xl">
+                  <p className="text-gray-500 mb-4">No hay eventos publicados próximos por ahora.</p>
+                  <p className="text-sm text-gray-400">Seguinos en Instagram para enterarte de las novedades.</p>
+                </div>
+              </FadeIn>
+            ) : (
+              <FadeIn>
+                <div className="relative">
+                  <div key={carouselIdx} className="carousel-slide bg-[#5c29c2] rounded-2xl p-8 md:p-12 text-white text-center">
+                    <div className="inline-flex items-center gap-3 bg-white/15 rounded-xl px-5 py-3 mb-6">
+                      <div className="text-center">
+                        <div className="text-4xl font-extrabold leading-none">{formatDate(events[carouselIdx].event_date).day}</div>
+                        <div className="text-sm font-bold uppercase tracking-wide opacity-80">{formatDate(events[carouselIdx].event_date).month}</div>
+                      </div>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-extrabold mb-3 leading-tight">{events[carouselIdx].title}</h3>
+                    {events[carouselIdx].location && (
+                      <p className="text-white/70 mb-6 text-base">📍 {events[carouselIdx].location}</p>
+                    )}
+                    {events[carouselIdx].registration_url && (
+                      <a href={events[carouselIdx].registration_url!} target="_blank" rel="noopener noreferrer"
+                        className="inline-block bg-[#29f0b4] text-[#5c29c2] font-bold px-8 py-3 rounded-full hover:opacity-90 transition-all">
+                        Inscribirse →
+                      </a>
+                    )}
+                  </div>
+
+                  {events.length > 1 && (
+                    <div className="flex justify-center gap-2 mt-5">
+                      {events.map((_, i) => (
+                        <button key={i} onClick={() => setCarouselIdx(i)}
+                          className={`h-2.5 rounded-full transition-all ${i === carouselIdx ? "bg-[#5c29c2] w-6" : "bg-gray-300 w-2.5 hover:bg-gray-400"}`} />
+                      ))}
+                    </div>
+                  )}
+
+                  {events.length > 1 && (
+                    <>
+                      <button onClick={() => setCarouselIdx(i => (i - 1 + events.length) % events.length)}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 w-10 h-10 bg-white border border-gray-100 rounded-full items-center justify-center shadow hover:bg-gray-50 transition-all hidden md:flex">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4l-4 4 4 4" stroke="#5c29c2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </button>
+                      <button onClick={() => setCarouselIdx(i => (i + 1) % events.length)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 w-10 h-10 bg-white border border-gray-100 rounded-full items-center justify-center shadow hover:bg-gray-50 transition-all hidden md:flex">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#5c29c2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </button>
+                    </>
+                  )}
+                </div>
+                <div className="text-center mt-6">
+                  <Link href="/eventos" className="text-sm font-bold text-[#5c29c2] hover:underline">
+                    Ver todos los eventos →
+                  </Link>
+                </div>
+              </FadeIn>
+            )}
+          </div>
+        </section>
+
+        <Footer />
+
+      </main>
+    </>
   );
 }
