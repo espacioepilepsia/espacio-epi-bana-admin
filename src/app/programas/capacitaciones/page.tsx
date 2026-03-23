@@ -1,5 +1,6 @@
 // RUTA: src/app/programas/capacitaciones/page.tsx
 "use client";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 

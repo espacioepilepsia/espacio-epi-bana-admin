@@ -1,5 +1,6 @@
 // RUTA: src/app/programas/page.tsx
 "use client";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";

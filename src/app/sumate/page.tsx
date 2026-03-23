@@ -1,5 +1,6 @@
 // RUTA: src/app/sumate/page.tsx
 "use client";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
