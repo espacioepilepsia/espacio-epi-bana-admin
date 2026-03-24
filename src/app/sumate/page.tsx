@@ -2,17 +2,29 @@
 "use client";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 export default function SumatePage() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "", experience: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "", experience: "", message: "", honeypot: "" });
   const [status, setStatus] = useState<"idle"|"loading"|"ok"|"err">("idle");
+  const [loadTime, setLoadTime] = useState(0);
+
+  useEffect(() => { setLoadTime(Date.now()); }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.email) return;
+
+    // Antigravity Bot Protection
+    const timeElapsed = Date.now() - loadTime;
+    if (form.honeypot || timeElapsed < 3000) {
+      console.warn("Bot detected or submission too fast");
+      setStatus("ok"); // Pretend success
+      return;
+    }
+
     setStatus("loading");
     const { error } = await supabase.from("contact_messages").insert({
       name: form.name, 
@@ -23,7 +35,7 @@ export default function SumatePage() {
       message: `QUIERO SUMARME: ${form.message}`
     });
     setStatus(error ? "err" : "ok");
-    if (!error) setForm({ name: "", email: "", phone: "", location: "", experience: "", message: "" });
+    if (!error) setForm({ name: "", email: "", phone: "", location: "", experience: "", message: "", honeypot: "" });
   }
 
   const areas = [
@@ -128,6 +140,11 @@ export default function SumatePage() {
                        <span>⚠️</span> Ocurrió un error. Intentá de nuevo.
                     </div>
                   )}
+
+                  {/* Bot protection */}
+                  <div className="hidden" aria-hidden="true">
+                    <input type="text" value={form.honeypot} onChange={(e) => setForm({ ...form, honeypot: e.target.value })} tabIndex={-1} autoComplete="off" />
+                  </div>
 
                   <button type="submit" disabled={status === "loading"}
                     className="w-full bg-[#5c29c2] text-white font-extrabold py-4 rounded-2xl hover:bg-[#7c3aed] transition-all disabled:opacity-50 shadow-lg shadow-[#5c29c2]/10">

@@ -2,20 +2,32 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function ContactoPage() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", honeypot: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "err">("idle");
+  const [loadTime, setLoadTime] = useState(0);
+
+  useEffect(() => { setLoadTime(Date.now()); }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.email) return;
+
+    // Antigravity Bot Protection
+    const timeElapsed = Date.now() - loadTime;
+    if (form.honeypot || timeElapsed < 3000) {
+      console.warn("Bot detected or submission too fast");
+      setStatus("ok");
+      return;
+    }
+
     setStatus("loading");
     const { error } = await supabase.from("contact_messages").insert({ name: form.name, email: form.email, phone: form.phone || null, message: form.message || null });
     setStatus(error ? "err" : "ok");
-    if (!error) setForm({ name: "", email: "", phone: "", message: "" });
+    if (!error) setForm({ name: "", email: "", phone: "", message: "", honeypot: "" });
   }
 
   return (
@@ -68,6 +80,11 @@ export default function ContactoPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#5c29c2] transition-colors resize-none"
                     placeholder="Contanos en qué podemos ayudarte..." />
                 </div>
+                {/* Bot protection */}
+                <div className="hidden" aria-hidden="true">
+                  <input type="text" value={form.honeypot} onChange={(e) => setForm({ ...form, honeypot: e.target.value })} tabIndex={-1} autoComplete="off" />
+                </div>
+
                 {status === "err" && <p className="text-red-500 text-sm">Ocurrió un error. Intentá de nuevo.</p>}
                 <button type="submit" disabled={status === "loading"}
                   className="bg-[#5c29c2] text-white font-bold py-3 rounded-xl hover:bg-[#7c3aed] transition-all disabled:opacity-50 disabled:cursor-not-allowed">

@@ -3,7 +3,7 @@
 "use client";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
@@ -16,30 +16,45 @@ export default function TuHistoriaPage() {
     location: "", 
     relationship: "", 
     story: "",
-    accepted_terms: false 
+    terms: false, // Renamed from accepted_terms
+    honeypot: "" // Added honeypot
   });
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "err">("idle");
+  const [loadTime, setLoadTime] = useState(0); // Added loadTime state
+
+  useEffect(() => { 
+    setLoadTime(Date.now()); 
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.story || !form.accepted_terms || !form.email) {
+    if (!form.name || !form.story || !form.terms || !form.email) { // Changed accepted_terms to terms, kept story validation
       alert("Por favor completá los campos obligatorios y aceptá los términos.");
       return;
     }
+
+    // Antigravity Bot Protection
+    const timeElapsed = Date.now() - loadTime;
+    if (form.honeypot || timeElapsed < 3000) {
+      console.warn("Bot detected or submission too fast");
+      setStatus("ok"); // Pretend success for bots
+      return;
+    }
+
     setStatus("loading");
     const { error } = await supabase.from("stories").insert({ 
       name: form.name, 
-      age: form.age,
+      age: parseInt(form.age) || null, // Added parseInt and null for age
       email: form.email,
-      instagram: form.instagram,
-      location: form.location,
+      instagram: form.instagram || null, // Added null for instagram
+      location: form.location || null, // Added null for location
       relationship: form.relationship,
       story: form.story,
-      accepted_terms: form.accepted_terms
+      accepted_terms: form.terms // Changed from form.accepted_terms to form.terms
     });
     setStatus(error ? "err" : "ok");
     if (!error) setForm({ 
-      name: "", age: "", email: "", instagram: "", location: "", relationship: "", story: "", accepted_terms: false 
+      name: "", age: "", email: "", instagram: "", location: "", relationship: "", story: "", terms: false, honeypot: "" // Reset honeypot and terms
     });
   }
 
@@ -136,12 +151,12 @@ export default function TuHistoriaPage() {
                 <div className="bg-[#fcfaff] border border-[#5c29c2]/10 rounded-2xl p-5 mb-8">
                   <label className="flex items-start gap-4 cursor-pointer group">
                     <div className="relative flex items-center mt-1">
-                      <input type="checkbox" required checked={form.accepted_terms} onChange={(e) => setForm({ ...form, accepted_terms: e.target.checked })}
+                      <input type="checkbox" required checked={form.terms} onChange={(e) => setForm({ ...form, terms: e.target.checked })}
                         className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-[#5c29c2] checked:bg-[#5c29c2]" />
                       <svg className="pointer-events-none absolute h-3.5 w-3.5 stroke-white opacity-0 peer-checked:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     </div>
                     <span className="text-xs text-gray-600 leading-relaxed font-medium group-hover:text-gray-900 transition-colors">
-                      Acepto los términos y condiciones. Entiendo que mi historia será revisada por el equipo de Espacio Epilepsia antes de ser publicada para asegurar un ambiente seguro y constructivo. Podés usar un seudónimo si preferís mantener tu privacidad.
+                      Al enviar mi historia, acepto que Espacio Epilepsia pueda publicarla de forma anónima o con mi nombre de pila en sus canales oficiales (Sitio web, Redes Sociales, etc.) para fines de difusión y concientización.
                     </span>
                   </label>
                 </div>
@@ -152,7 +167,13 @@ export default function TuHistoriaPage() {
                   </div>
                 )}
 
-                <button type="submit" disabled={status === "loading"}
+                  {/* Honeypot field - Bots will fill this, humans won't */}
+                  <div className="hidden" aria-hidden="true">
+                    <label>No completar este campo si sos humano</label>
+                    <input type="text" value={form.honeypot} onChange={(e) => setForm({ ...form, honeypot: e.target.value })} tabIndex={-1} autoComplete="off" />
+                  </div>
+
+                  <button type="submit" disabled={status === "loading"}
                   className="w-full bg-[#5c29c2] text-white font-extrabold py-4 rounded-2xl hover:bg-[#7c3aed] transition-all disabled:opacity-50 shadow-lg shadow-[#5c29c2]/10 hover:shadow-[#5c29c2]/20 hover:-translate-y-0.5">
                   {status === "loading" ? (
                     <span className="flex items-center justify-center gap-2">

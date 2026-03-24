@@ -133,10 +133,10 @@ export default function Home() {
                 className="bg-white text-[#5c29c2] font-bold px-7 py-3 rounded-full hover:bg-[#29f0b4] hover:text-white transition-all">
                 Conocé más
               </Link>
-              <a href="https://www.instagram.com/espacioepilepsia/" target="_blank" rel="noopener noreferrer"
+              <Link href="/sumate"
                 className="bg-transparent text-white font-bold px-7 py-3 rounded-full border-2 border-white/40 hover:bg-white/10 transition-all">
                 Sumate a la comunidad
-              </a>
+              </Link>
             </div>
           </div>
         </section>
@@ -179,10 +179,10 @@ export default function Home() {
               <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
                 Acercamos a las personas con epilepsia, creando comunidades, grupos de WhatsApp, realizando charlas en vivo en Instagram. Contamos historias de personas con epilepsia que estudian, trabajan, son madres, padres, tienen días buenos y malos ¡Cómo todos! Y muchas actividades más...
               </p>
-              <a href="https://www.instagram.com/espacioepilepsia/" target="_blank" rel="noopener noreferrer"
+              <Link href="/sumate"
                 className="inline-block bg-[#f97316] text-white font-bold px-8 py-3 rounded-full hover:bg-[#ea580c] transition-all text-lg">
                 ¡Sumate a la comunidad!
-              </a>
+              </Link>
             </FadeIn>
           </div>
         </section>
