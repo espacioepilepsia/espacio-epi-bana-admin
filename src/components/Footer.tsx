@@ -83,6 +83,8 @@ function NewsletterForm() {
         value={email}
         onChange={e => { setEmail(e.target.value); setStatus("idle"); }}
         placeholder="tu@email.com"
+        autoComplete="off"
+        data-lpignore="true"
         className="flex-1 bg-white/10 border border-white/20 text-white placeholder-white/40 rounded-full px-5 py-3 text-sm outline-none focus:border-white/50 transition-colors"
       />
       <button

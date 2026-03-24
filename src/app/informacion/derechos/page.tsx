@@ -21,54 +21,57 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   return <div ref={ref} style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms` }}>{children}</div>;
 }
 
-function AccordionItem({ title, children }: { title: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+function AccordionItem({ title, children, open, onToggle, icon = "⚖️" }: { title: string; children: React.ReactNode; open: boolean; onToggle: () => void; icon?: string }) {
   return (
-    <div className={`border rounded-2xl overflow-hidden transition-all ${open ? "border-[#5c29c2] shadow-sm" : "border-gray-100 hover:border-[#5c29c2]/30"}`}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-4 p-5 text-left bg-white">
-        <span className="font-bold text-base text-gray-900">{title}</span>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className={`flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180 text-[#5c29c2]" : "text-gray-400"}`}>
+    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden transition-all hover:border-[#5c29c2]/20">
+      <button onClick={onToggle} className="w-full flex items-center gap-4 px-5 py-4 text-left">
+        <span className="text-2xl flex-shrink-0" aria-hidden>{icon}</span>
+        <span className="font-semibold text-base text-gray-900 flex-1 border-l-4 border-[#29f0b4] pl-4">{title}</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className={`flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} style={{ color: open ? "#5c29c2" : "#9ca3af" }}>
           <path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      {open && <div className="px-5 pb-5 bg-white border-t border-gray-100 text-sm text-gray-700 leading-relaxed">{children}</div>}
+      {open && <div className="pl-[4.5rem] pr-5 pb-5 text-sm text-gray-700 leading-relaxed border-t border-gray-100">{children}</div>}
     </div>
   );
 }
 
 const faqs = [
   {
+    icon: "⚖️",
     title: "¿Qué derechos me reconoce la ley si tengo epilepsia?",
     content: (
       <div className="pt-4 space-y-3">
         <p>La <a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/65000-69999/66578/norma.htm" target="_blank" rel="noopener noreferrer" className="text-[#5c29c2] font-semibold hover:underline">Ley 25.404</a> garantiza a las personas con epilepsia:</p>
         <ul className="space-y-1.5 ml-4">
-          {["Acceso al tratamiento médico integral, sin discriminación","Derecho a medicación anticonvulsiva gratuita (con o sin CUD)","Atención neurológica adecuada","Inclusión educativa y laboral","Protección social"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["Acceso al tratamiento médico integral, sin discriminación", "Derecho a medicación anticonvulsiva gratuita (con o sin CUD)", "Atención neurológica adecuada", "Inclusión educativa y laboral", "Protección social"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <p>Esta ley protege además contra cualquier forma de discriminación en el ámbito laboral, educativo o social.</p>
       </div>
     )
   },
   {
+    icon: "🏥",
     title: "¿Qué dice la Ley de Epilepsia sobre cobertura de obras sociales y prepagas?",
     content: (
       <div className="pt-4 space-y-3">
         <p>La <a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/65000-69999/66578/norma.htm" target="_blank" rel="noopener noreferrer" className="text-[#5c29c2] font-semibold hover:underline">Ley 25.404</a> y su <a href="https://www.argentina.gob.ar/normativa/nacional/decreto-53-2009-149915/texto" target="_blank" rel="noopener noreferrer" className="text-[#5c29c2] font-semibold hover:underline">Decreto 53/2009</a> establece que las obras sociales y prepagas deben cubrir al 100% el tratamiento médico de la epilepsia. Esto incluye:</p>
         <ul className="space-y-1.5 ml-4">
-          {["Medicamentos","Estudios diagnósticos","Controles médicos","Tratamientos necesarios"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["Medicamentos", "Estudios diagnósticos", "Controles médicos", "Tratamientos necesarios"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <p>El incumplimiento puede ser reclamado administrativa o judicialmente.</p>
       </div>
     )
   },
   {
+    icon: "📄",
     title: "¿Qué es el CUD y por qué deberías considerarlo?",
     content: (
       <div className="pt-4 space-y-3">
         <p>El <strong>Certificado Único de Discapacidad (CUD)</strong> es un documento oficial con validez en todo el territorio argentino, que acredita la existencia de una discapacidad conforme a criterios médicos, funcionales y sociales.</p>
         <p>No implica incapacidad legal ni afecta tu autonomía civil. Tener CUD te brinda acceso a:</p>
         <ul className="space-y-1.5 ml-4">
-          {["Transporte público gratuito","Exenciones impositivas","Prioridades en ciertos trámites administrativos","Cobertura médica al 100% del tratamiento relacionado con tu diagnóstico","Facilita el acceso a tratamientos y medicamentos"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["Transporte público gratuito", "Exenciones impositivas", "Prioridades en ciertos trámites administrativos", "Cobertura médica al 100% del tratamiento relacionado con tu diagnóstico", "Facilita el acceso a tratamientos y medicamentos"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <div className="bg-[#f5f0ff] rounded-xl p-4 mt-3">
           <p className="font-bold text-[#5c29c2] text-xs uppercase tracking-wide mb-1">Importante</p>
@@ -78,12 +81,13 @@ const faqs = [
     )
   },
   {
+    icon: "📅",
     title: "¿Cuándo puedo solicitar el CUD?",
     content: (
       <div className="pt-4 space-y-3">
         <p>Podés solicitar el CUD cuando la epilepsia genera una limitación funcional que afecta significativamente tu vida cotidiana:</p>
         <ul className="space-y-1.5 ml-4">
-          {["Dificultades para trabajar o estudiar","Problemas para trasladarte","Dificultad para recibir atención médica adecuada","Limitaciones para participar en la vida social de manera autónoma"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["Dificultades para trabajar o estudiar", "Problemas para trasladarte", "Dificultad para recibir atención médica adecuada", "Limitaciones para participar en la vida social de manera autónoma"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <p>En el caso de la epilepsia, suelen considerarse como criterios relevantes: crisis frecuentes o impredecibles, epilepsia refractaria al tratamiento, efectos adversos severos de la medicación, y barreras sociales o económicas para acceder al tratamiento.</p>
         <p className="font-semibold text-[#5c29c2]">El trámite es voluntario y gratuito.</p>
@@ -91,18 +95,20 @@ const faqs = [
     )
   },
   {
+    icon: "📋",
     title: "¿Cómo se tramita el CUD en casos de epilepsia?",
     content: (
       <div className="pt-4 space-y-3">
         <p>El trámite comienza con la descarga de una planilla médica que debe completar un neurólogo tratante. También se requiere:</p>
         <ul className="space-y-1.5 ml-4">
-          {["DNI","Estudios médicos actualizados","Historia clínica","Informes interdisciplinarios si los hubiera"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["DNI", "Estudios médicos actualizados", "Historia clínica", "Informes interdisciplinarios si los hubiera"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <p>Luego se solicita un turno en la Junta Evaluadora correspondiente a tu jurisdicción. Allí un equipo multidisciplinario valorará si corresponde emitir el CUD.</p>
       </div>
     )
   },
   {
+    icon: "💯",
     title: "¿Necesito el CUD para que me cubra al 100%?",
     content: (
       <div className="pt-4 space-y-3">
@@ -114,11 +120,12 @@ const faqs = [
     )
   },
   {
+    icon: "⚠️",
     title: "¿Qué problemas comunes enfrentan las personas con epilepsia ante obras sociales?",
     content: (
       <div className="pt-4 space-y-3">
         <ul className="space-y-1.5 ml-4">
-          {["Negativa de cobertura sin fundamento válido","Exigencia de trámites excesivos o redundantes","Entrega irregular de medicación","Cambios arbitrarios de medicamentos sin consentimiento médico","Falta de respuesta a los reclamos","Demoras injustificadas en la autorización de estudios"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["Negativa de cobertura sin fundamento válido", "Exigencia de trámites excesivos o redundantes", "Entrega irregular de medicación", "Cambios arbitrarios de medicamentos sin consentimiento médico", "Falta de respuesta a los reclamos", "Demoras injustificadas en la autorización de estudios"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <div className="bg-[#f5f0ff] rounded-xl p-4 mt-2">
           <p className="text-[#5c29c2] text-sm font-semibold">Toda negativa debe hacerse por escrito y toda solicitud debe recibir respuesta en 10 días hábiles. Si eso no sucede, podés iniciar un amparo de salud.</p>
@@ -127,11 +134,12 @@ const faqs = [
     )
   },
   {
+    icon: "📝",
     title: "¿Dónde presentar mi reclamo? Paso a paso",
     content: (
       <div className="pt-4 space-y-4">
         {[
-          { n: 1, title: "Reuní la documentación", items: ["Historia clínica actualizada","Receta médica","Constancia de afiliación","Documentación que respalde tu diagnóstico"] },
+          { n: 1, title: "Reuní la documentación", items: ["Historia clínica actualizada", "Receta médica", "Constancia de afiliación", "Documentación que respalde tu diagnóstico"] },
           { n: 2, title: "Presentá una nota formal", desc: "Redactá una nota dirigida a la obra social explicando tu reclamo. Adjuntá toda la documentación. Solicitá copia con sello de recepción o enviá por correo certificado." },
           { n: 3, title: "Esperá la respuesta", desc: "La obra social tiene 10 días hábiles para responderte por escrito." },
           { n: 4, title: "Si no hay respuesta o es negativa", desc: "Podés denunciar ante la Superintendencia de Servicios de Salud." },
@@ -153,12 +161,13 @@ const faqs = [
     )
   },
   {
+    icon: "👨‍⚖️",
     title: "¿Cuándo necesito la ayuda de un abogado? ¿Hay abogados gratuitos?",
     content: (
       <div className="pt-4 space-y-3">
         <p className="font-semibold">Necesitás un abogado cuando:</p>
         <ul className="space-y-1.5 ml-4">
-          {["Te niegan la cobertura de tratamiento esencial","Te rechazan el CUD injustificadamente y querés reclamar judicialmente","Sufrís discriminación laboral, educativa o institucional","La obra social no responde a tus reclamos dentro de los plazos legales","Necesitás iniciar un amparo de salud"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
+          {["Te niegan la cobertura de tratamiento esencial", "Te rechazan el CUD injustificadamente y querés reclamar judicialmente", "Sufrís discriminación laboral, educativa o institucional", "La obra social no responde a tus reclamos dentro de los plazos legales", "Necesitás iniciar un amparo de salud"].map(item => <li key={item} className="flex gap-2"><span className="text-[#5c29c2] flex-shrink-0">•</span>{item}</li>)}
         </ul>
         <p className="font-semibold mt-3">Podés acceder a asesoramiento gratuito a través de:</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
@@ -177,6 +186,7 @@ const faqs = [
     )
   },
   {
+    icon: "🏛️",
     title: "¿Qué necesito para presentar un amparo de salud?",
     content: (
       <div className="pt-4 space-y-2">
@@ -198,6 +208,7 @@ const faqs = [
     )
   },
   {
+    icon: "💊",
     title: "¿Qué pasa con la medicación no aprobada por ANMAT?",
     content: (
       <div className="pt-4 space-y-3">
@@ -212,6 +223,10 @@ const faqs = [
 ];
 
 export default function DerechosPage() {
+  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+  const toggleItem = (i: number) => setOpenItems(prev => { const s = new Set(prev); s.has(i) ? s.delete(i) : s.add(i); return s; });
+  const expandAll = () => setOpenItems(new Set(faqs.map((_, i) => i)));
+  const collapseAll = () => setOpenItems(new Set());
   return (
     <main>
       <Navbar />
@@ -246,16 +261,67 @@ export default function DerechosPage() {
       </section>
 
       {/* FAQ LEGAL */}
-      <section className="py-8 px-6 pb-16 bg-white">
+      <section className="py-12 px-6 pb-16 bg-white">
         <div className="max-w-4xl mx-auto">
           <FadeIn>
-            <h2 className="text-2xl font-extrabold mb-6">Preguntas frecuentes sobre tus derechos</h2>
+            {/* Título centrado con underline mint */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-extrabold tracking-tight mb-3">Preguntas Frecuentes</h2>
+              <div style={{ width: "48px", height: "4px", background: "#29f0b4", borderRadius: "2px", margin: "0 auto" }} />
+            </div>
+            {/* Botones Expandir / Colapsar */}
+            <div className="flex gap-3 justify-center mb-8">
+              <button onClick={expandAll}
+                className="flex items-center gap-2 font-bold px-6 py-2.5 rounded-xl text-sm text-white transition-all hover:opacity-90"
+                style={{ background: "#5c29c2" }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2h4M2 2v4M14 2h-4M14 2v4M2 14h4M2 14v-4M14 14h-4M14 14v-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                Expandir Todo
+              </button>
+              <button onClick={collapseAll}
+                className="flex items-center gap-2 font-bold px-6 py-2.5 rounded-xl text-sm text-white transition-all hover:opacity-90"
+                style={{ background: "#29f0b4", color: "#1a1a1a" }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 8h6M8 5v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                Colapsar Todo
+              </button>
+            </div>
             <div className="flex flex-col gap-3">
-              {faqs.map(({ title, content }) => (
-                <AccordionItem key={title} title={title}>
-                  {content}
-                </AccordionItem>
-              ))}
+              {faqs.map(({ title, content, icon }, i) => {
+                const item = (
+                  <AccordionItem key={title} title={title} icon={icon} open={openItems.has(i)} onToggle={() => toggleItem(i)}>
+                    {content}
+                  </AccordionItem>
+                );
+
+                if (title === "¿Cómo se tramita el CUD en casos de epilepsia?") {
+                  return [
+                    item,
+                    <div key="cud-legend" className="bg-[#f5f0ff] rounded-xl p-5 border border-[#5c29c2]/15 text-sm text-gray-700 leading-relaxed shadow-sm">
+                      <p className="font-bold text-[#5c29c2] text-sm uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <span className="text-xl">💡</span> Importante
+                      </p>
+                      <p className="mb-3">El CUD no te convierte en una persona "incapaz". No implica una declaración de incapacidad civil ni una restricción de derechos. Las personas con CUD conservan plenamente su autonomía legal: pueden contratar, votar, trabajar, estudiar y tomar decisiones.</p>
+                      <p>Solo una sentencia judicial puede declarar la restricción de la capacidad jurídica, y eso ocurre en contextos específicos. Tener CUD solo habilita el acceso a derechos y beneficios establecidos por ley.</p>
+                    </div>
+                  ];
+                }
+
+                return item;
+              })}
+            </div>
+
+            <div className="mt-12 flex justify-center w-full">
+              <Link
+                href="/informacion/preguntas-frecuentes"
+                className="inline-flex items-center gap-3 font-extrabold px-8 py-4 rounded-[2rem] text-lg hover:-translate-y-1 transition-transform shadow-md"
+                style={{ backgroundColor: "#29f0b4", color: "#5c29c2" }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Ver preguntas frecuentes de epilepsia
+              </Link>
             </div>
           </FadeIn>
         </div>

@@ -171,7 +171,28 @@ export default function InformacionPage() {
               </div>
             </FadeIn>
             {/* FIN DEL VIDEO */}
+            {/* PRIMEROS AUXILIOS */}
+          </FadeIn>
+        </div>
+      </section>
 
+      <section className="py-16 px-6" style={{ background: "#f5f0ff" }}>
+        <div className="max-w-4xl mx-auto">
+          <FadeIn>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-6">
+              ¿Por qué es importante asistir correctamente a una persona con{" "}
+              <span style={{ color: "#5c29c2" }}>epilepsia?</span>
+            </h2>
+            <p className="text-base text-gray-600 leading-relaxed mb-8">
+              Hay que intentar NO realizar maniobras que puedan lastimar a la persona implicada. Conociendo cómo actuar correctamente ayudaremos a la persona a respirar con mayor facilidad y atravesar de mejor manera su crisis.
+            </p>
+            <Link
+              href="/informacion/primeros-auxilios"
+              className="inline-block text-white font-bold px-6 py-3 rounded-xl transition-all text-sm hover:opacity-90"
+              style={{ background: "#5c29c2" }}
+            >
+              Conocer más sobre primeros auxilios
+            </Link>
           </FadeIn>
         </div>
       </section>

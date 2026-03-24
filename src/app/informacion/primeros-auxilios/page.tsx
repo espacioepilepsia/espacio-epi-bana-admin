@@ -192,11 +192,65 @@ export default function PrimerosAuxiliosPage() {
         </div>
       </section>
 
+
+      {/* PARA MÁS INFO */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <FadeIn>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-3">
+              Para más info
+            </h2>
+            <p className="text-gray-500 mb-8 leading-relaxed">
+              Te recomendamos que visites estos links
+            </p>
+            <ul className="space-y-4 list-none">
+              {[
+                { label: "Organización Mundial de la Salud", href: "https://www.who.int/es/news-room/fact-sheets/detail/epilepsy" },
+                { label: "Liga Internacional Contra la Epilepsia", href: "https://www.ilae.org/" },
+                { label: "Liga Argentina Contra la Epilepsia", href: "https://www.lace.org.ar/" },
+                { label: "Liga Chilena contra la Epilepsia", href: "https://www.ligaepilepsia.cl/" },
+                { label: "Mar de Somnis", href: "https://mardesomnis.org/que-es-la-epilepsia/" },
+              ].map(({ label, href }) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-extrabold text-base hover:underline transition-colors"
+                    style={{ color: "#5c29c2" }}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </FadeIn>
+        </div>
+      </section>
+
+
+      {/* VIDEO VIMEO */}
+      <section className="py-16 px-6" style={{ background: "#f5f0ff" }}>
+        <div className="max-w-4xl mx-auto">
+          <FadeIn>
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-xl" style={{ paddingTop: "56.25%" }}>
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://player.vimeo.com/video/69911354"
+                title="Video sobre epilepsia"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* INFOGRAFÍAS DESCARGABLES */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <FadeIn>
-            <h2 className="text-3xl font-extrabold mb-3">Herramientas para descargar</h2>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-3">Herramientas para descargar</h2>
             <p className="text-gray-500 mb-8 leading-relaxed">Descargalas, compartilas, imprimilas, hacé folletos y etiquetanos.</p>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -205,7 +259,7 @@ export default function PrimerosAuxiliosPage() {
               { img: "/images/primeros-auxilios-individual-2.png", title: "Primeros auxilios en crisis de ausencia y crisis focales", desc: "Guía visual para crisis no convulsivas" },
             ].map(({ img, title, desc }) => (
               <FadeIn key={title}>
-                <div className="bg-[#f5f0ff] border border-[#5c29c2]/15 rounded-2xl overflow-hidden hover:-translate-y-1 transition-all hover:shadow-lg">
+                <div className="bg-white border border-[#5c29c2]/15 rounded-2xl overflow-hidden hover:-translate-y-1 transition-all hover:shadow-lg">
                   <div className="bg-white p-4 flex items-center justify-center h-48 overflow-hidden">
                     <img src={img} alt={title} className="h-full w-auto object-contain" />
                   </div>
@@ -224,39 +278,8 @@ export default function PrimerosAuxiliosPage() {
         </div>
       </section>
 
-      {/* LINKS Y CAMPUS */}
-      <section className="py-16 px-6" style={{ background: "#5c29c2" }}>
-        <div className="max-w-4xl mx-auto">
-          <FadeIn>
-            <h2 className="text-2xl font-extrabold text-white mb-6">Para más información</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              {[
-                { label: "Organización Mundial de la Salud", href: "https://www.who.int/es/news-room/fact-sheets/detail/epilepsy" },
-                { label: "Liga Internacional Contra la Epilepsia", href: "https://www.ilae.org/" },
-                { label: "Liga Argentina Contra la Epilepsia", href: "https://www.lace.org.ar/" },
-                { label: "Liga Chilena contra la Epilepsia", href: "https://www.ligaepilepsia.cl/" },
-                { label: "Mar de Somnis", href: "https://www.mardesomnis.org/es/epilepsia/que-es-la-epilepsia/" },
-              ].map(({ label, href }) => (
-                <a key={href} href={href} target="_blank" rel="noopener noreferrer"
-                  className="bg-white/10 border border-white/20 rounded-xl px-5 py-3 text-white/80 hover:bg-white/20 hover:text-white transition-all text-sm font-semibold flex items-center justify-between">
-                  {label}
-                  <span className="text-white/40">→</span>
-                </a>
-              ))}
-            </div>
-            <div className="bg-white/10 border border-white/20 rounded-2xl p-6 text-center">
-              <h3 className="font-bold text-white text-lg mb-2">¿Querés más información?</h3>
-              <p className="text-white/70 text-sm mb-4">Contamos con un campus online con capacitaciones sobre diversos temas relacionados a la epilepsia.</p>
-              <a href="https://campus.espacioepilepsia.org/" target="_blank" rel="noopener noreferrer"
-                className="inline-block bg-[#29f0b4] text-[#5c29c2] font-bold px-6 py-2.5 rounded-xl hover:opacity-90 transition-all">
-                Ir al campus online →
-              </a>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
       <Footer />
     </main>
   );
 }
+

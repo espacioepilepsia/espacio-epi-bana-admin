@@ -68,7 +68,7 @@ export default function CongresosPage() {
                     </div>
                   ))}
                 </div>
-                <a href="https://epifest.com/" target="_blank" rel="noopener noreferrer"
+                <a href="https://epifest.com.ar/" target="_blank" rel="noopener noreferrer"
                   className="inline-block font-bold px-6 py-3 rounded-xl transition-all text-sm"
                   style={{ background: "#5c29c2", color: "white" }}>
                   Visitá la web de epifest! →
