@@ -147,7 +147,7 @@ export default function SumatePage() {
                   </div>
 
                   <button type="submit" disabled={status === "loading"}
-                    className="w-full bg-[#5c29c2] text-white font-extrabold py-4 rounded-2xl hover:bg-[#7c3aed] transition-all disabled:opacity-50 shadow-lg shadow-[#5c29c2]/10">
+                    className="w-full bg-[#5c29c2] text-white font-extrabold py-4 rounded-full hover:bg-[#7c3aed] transition-all disabled:opacity-50 shadow-lg shadow-[#5c29c2]/10 hover:shadow-[#5c29c2]/20 hover:-translate-y-0.5">
                     {status === "loading" ? "Enviando..." : "Quiero sumarme 🙌"}
                   </button>
                 </form>

@@ -112,11 +112,11 @@ export default function Home() {
             </p>
             <div className="flex flex-wrap gap-4 justify-center mt-6">
               <Link href="/informacion"
-                className="bg-white text-[#5c29c2] font-black px-8 py-4 text-lg rounded-full hover:bg-[#29f0b4] hover:text-[#5c29c2] hover:scale-105 active:scale-95 transition-all shadow-lg">
+                className="bg-white text-[#5c29c2] font-extrabold px-8 py-4 text-lg rounded-full hover:bg-[#29f0b4] hover:text-[#5c29c2] hover:scale-105 active:scale-95 transition-all shadow-lg">
                 Conocé más
               </Link>
               <Link href="/sumate"
-                className="bg-transparent text-white font-black px-8 py-4 text-lg rounded-full border-2 border-white/40 hover:bg-white/10 hover:border-white transition-all">
+                className="bg-transparent text-white font-extrabold px-8 py-4 text-lg rounded-full border-2 border-white/40 hover:bg-white/10 hover:border-white transition-all">
                 Sumate a la comunidad
               </Link>
             </div>
@@ -162,7 +162,7 @@ export default function Home() {
                 Acercamos a las personas con epilepsia, creando comunidades, grupos de WhatsApp, realizando charlas en vivo en Instagram. Contamos historias de personas con epilepsia que estudian, trabajan, son madres, padres, tienen días buenos y malos ¡Cómo todos! Y muchas actividades más...
               </p>
               <Link href="/sumate"
-                className="inline-block bg-[#f97316] text-white font-bold px-8 py-3 rounded-full hover:bg-[#ea580c] transition-all text-lg shadow-md hover:scale-105">
+                className="inline-block bg-[#5c29c2] text-white font-extrabold px-8 py-3 rounded-full hover:bg-[#7c3aed] transition-all text-lg shadow-md hover:scale-105">
                 ¡Sumate a la comunidad!
               </Link>
             </FadeIn>

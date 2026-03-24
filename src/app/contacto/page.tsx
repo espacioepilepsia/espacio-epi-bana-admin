@@ -87,7 +87,7 @@ export default function ContactoPage() {
 
                 {status === "err" && <p className="text-red-500 text-sm">Ocurrió un error. Intentá de nuevo.</p>}
                 <button type="submit" disabled={status === "loading"}
-                  className="bg-[#5c29c2] text-white font-bold py-3 rounded-xl hover:bg-[#7c3aed] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                  className="bg-[#5c29c2] text-white font-bold py-3 px-8 rounded-full hover:bg-[#7c3aed] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   {status === "loading" ? "Enviando..." : "Enviar mensaje"}
                 </button>
               </form>
