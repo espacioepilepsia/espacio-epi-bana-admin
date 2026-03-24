@@ -96,7 +96,7 @@ export const metadata: Metadata = {
 
   // Verificación Google Search Console (reemplazá con tu código real)
   verification: {
-    google: "REEMPLAZAR-CON-TU-CODIGO-DE-GOOGLE-SEARCH-CONSOLE",
+    google: "ku4wNi9JNJY_Uo-WUm8GMYY9FZA-VK_wMwYwbZabgR8",
   },
 
   // App info
