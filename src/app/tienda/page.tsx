@@ -63,18 +63,22 @@ export default function TiendaPage() {
     <main>
       {/* NAVBAR */}
       <Navbar />
-         
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver al Inicio</Link>
+        </div>
+      </div>
 
       {/* HERO */}
-      <section className="pt-[70px]" style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-wider">
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 bg-[#f5f0ff] border border-[#5c29c2]/20 text-[#5c29c2] text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-wider">
             🛍️ Tienda oficial
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
             Tienda Espacio Epilepsia
           </h1>
-          <p className="text-lg text-white/70 max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 max-w-xl mx-auto leading-relaxed">
             Productos con diseño exclusivo. Cada compra apoya nuestra misión de informar y contener.
           </p>
         </div>

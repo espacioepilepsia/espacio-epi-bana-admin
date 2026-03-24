@@ -117,12 +117,26 @@ export default function PreguntasFrecuentesPage() {
   return (
     <main>
       <Navbar />
-      <section style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <Link href="/informacion" className="text-white/60 text-sm hover:text-white transition-colors mb-4 inline-flex items-center gap-1">← Volver a Información</Link>
-          <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 mt-3">❓ FAQ</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Hablemos de Epilepsia</h1>
-          <p className="text-lg text-white/70 max-w-2xl leading-relaxed">Conocer la epilepsia, transformar la mirada. Preparamos respuestas claras, actualizadas y accesibles, basadas en fuentes confiables como la ILAE, la OMS y la IBE.</p>
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/informacion" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver a Información</Link>
+        </div>
+      </div>
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 bg-[#f5f0ff] border border-[#5c29c2]/20 text-[#5c29c2] text-xs font-bold px-4 py-1.5 rounded-full mb-6 mt-4">❓ FAQ</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">Hablemos de Epilepsia</h1>
+          <div className="text-lg text-gray-600 max-w-3xl leading-relaxed space-y-4 text-center">
+            <p>
+              En Fundación Espacio Epilepsia creemos que la información es poder. Sabemos que recibir un diagnóstico de epilepsia, convivir con la condición o acompañar a alguien que la tiene puede generar dudas, miedos e incertidumbre. Por eso, preparamos esta sección con respuestas claras, actualizadas y accesibles, basadas en fuentes confiables como la ILAE (Liga Internacional Contra la Epilepsia), la OMS (Organización Mundial de la Salud) y la IBE (Oficina Internacional para la Epilepsia).
+            </p>
+            <p>
+              Aquí vas a encontrar respuestas a las preguntas más comunes: Nuestro objetivo es que esta información te ayude a tomar decisiones más informadas, reducir el estigma y acercarte a una comunidad que te acompaña.
+            </p>
+            <p>
+              Si tenés una pregunta que no aparece acá, escribinos! Estamos para escucharte.
+            </p>
+          </div>
         </div>
       </section>
 

@@ -7,24 +7,30 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const menu = [
-  { label: "Información", href: "/informacion", children: [
-    { label: "¿Qué es la epilepsia?", href: "/informacion" },
-    { label: "Primeros auxilios", href: "/informacion/primeros-auxilios" },
-    { label: "Epilepsia y tus derechos", href: "/informacion/derechos" },
-    { label: "Preguntas frecuentes", href: "/informacion/preguntas-frecuentes" },
-  ]},
-  { label: "Programas", href: "/programas", children: [
-    { label: "Charlas online", href: "/programas/charlas" },
-    { label: "Capacitaciones", href: "/programas/capacitaciones" },
-    { label: "Congresos", href: "/programas/congresos" },
-    { label: "Colaboraciones", href: "/programas/colaboraciones" },
-  ]},
+  {
+    label: "Información", href: "/informacion", children: [
+      { label: "¿Qué es la epilepsia?", href: "/informacion" },
+      { label: "Primeros auxilios", href: "/informacion/primeros-auxilios" },
+      { label: "Epilepsia y tus derechos", href: "/informacion/derechos" },
+      { label: "Preguntas frecuentes", href: "/informacion/preguntas-frecuentes" },
+    ]
+  },
+  {
+    label: "Programas", href: "/programas", children: [
+      { label: "Charlas online", href: "/programas/charlas" },
+      { label: "Capacitaciones", href: "/programas/capacitaciones" },
+      { label: "Congresos", href: "/programas/congresos" },
+      { label: "Colaboraciones", href: "/programas/colaboraciones" },
+    ]
+  },
   { label: "Institucional", href: "/institucional" },
-  { label: "Comunidad", href: "/comunidad", children: [
-    { label: "Blog", href: "/blog" },
-    { label: "Tu historia", href: "/tuhistoria" },
-    { label: "Sumate", href: "/sumate" },
-  ]},
+  {
+    label: "Comunidad", href: "/comunidad", children: [
+      { label: "Blog", href: "/blog" },
+      { label: "Tu historia", href: "/tuhistoria" },
+      { label: "Sumate", href: "/sumate" },
+    ]
+  },
   { label: "Tienda", href: "/tienda" },
   { label: "Eventos", href: "/eventos" },
 ];
@@ -47,9 +53,8 @@ function DropdownItem({ item }: { item: typeof menu[0] }) {
     return (
       <li>
         <Link href={item.href}
-          className={`text-[15px] font-semibold px-4 py-2 rounded-lg transition-all block whitespace-nowrap ${
-            isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
-          }`}>
+          className={`text-[15px] font-semibold px-4 py-2 rounded-lg transition-all block whitespace-nowrap ${isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
+            }`}>
           {item.label}
         </Link>
       </li>
@@ -59,9 +64,8 @@ function DropdownItem({ item }: { item: typeof menu[0] }) {
   return (
     <li ref={ref} className="relative">
       <button onClick={() => setOpen(!open)}
-        className={`text-[15px] font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1 whitespace-nowrap ${
-          isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
-        }`}>
+        className={`text-[15px] font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1 whitespace-nowrap ${isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
+          }`}>
         {item.label}
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
           className={`transition-transform duration-200 mt-0.5 ${open ? "rotate-180" : ""}`}>
@@ -73,11 +77,10 @@ function DropdownItem({ item }: { item: typeof menu[0] }) {
           style={{ animation: "fadeDown 0.15s ease" }}>
           {item.children!.map((child) => (
             <Link key={child.href} href={child.href} onClick={() => setOpen(false)}
-              className={`block px-4 py-2.5 text-sm transition-colors ${
-                usePathname() === child.href
+              className={`block px-4 py-2.5 text-sm transition-colors ${usePathname() === child.href
                   ? "text-[#5c29c2] font-bold bg-[#f5f0ff]"
                   : "text-gray-700 hover:text-[#5c29c2] hover:bg-[#f5f0ff]"
-              }`}>
+                }`}>
               {child.label}
             </Link>
           ))}

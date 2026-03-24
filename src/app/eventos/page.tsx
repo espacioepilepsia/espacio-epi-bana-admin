@@ -59,12 +59,17 @@ export default function EventosPage() {
   return (
     <main>
 <Navbar />
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver al Inicio</Link>
+        </div>
+      </div>
      
-      <section className="pt-[70px]" style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3">Agenda</p>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Eventos</h1>
-          <p className="text-lg text-white/70 max-w-xl leading-relaxed">Charlas, congresos, capacitaciones y encuentros de la comunidad de Espacio Epilepsia.</p>
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <p className="text-xs font-bold text-[#5c29c2] uppercase tracking-widest mb-3">Agenda</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">Eventos</h1>
+          <p className="text-lg text-gray-600 max-w-xl leading-relaxed">Charlas, congresos, capacitaciones y encuentros de la comunidad de Espacio Epilepsia.</p>
         </div>
       </section>
 

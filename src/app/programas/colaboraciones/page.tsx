@@ -24,38 +24,27 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 const colaboraciones = [
   {
     icon: "🏥",
-    tag: "2021 · 2022",
-    title: "Semana de la Epilepsia",
-    desc: "En el marco del Día Latinoamericano de la Epilepsia, organizamos junto a la Sociedad Neurológica Argentina (y en 2022 también con la Liga Argentina Contra la Epilepsia y la Young Epilepsy Section de la ILAE) la Semana de la Epilepsia, con charlas en vivo con diversos profesionales de neurología.",
-    link: { label: "Ver videos en Instagram", href: "https://www.instagram.com/semana_de_la_epilepsia/" },
+    tag: "2021",
+    title: "Semana de la Epilepsia 2021",
+    desc: "En el marco del “Día Latinoamericano de la Epilepsia”. organizamos junto a la Sociedad Neurológica Argentina la Semana de la Epilepsia, donde se realizaron charlas en Vivo con diversos profesionales de neurología.",
+    link: { label: "Canal de Instagram", href: "https://www.instagram.com/semana_de_la_epilepsia/" },
   },
+
+  {
+    icon: "🏥",
+    tag: "2022",
+    title: "Semana de la Epilepsia 2022",
+    desc: "En el marco del “Día Latinoamericano de la Epilepsia”. organizamos junto a la Sociedad Neurológica Argentina, la Liga Argentina Contra la Epilepsia y la Young Epilepsy Section de la ILAE la Semana de la Epilepsia, donde se realizaron charlas en Vivo con diversos profesionales de neurología.",
+    link: { label: "Canal de Instagram", href: "https://www.instagram.com/semana_de_la_epilepsia/" },
+    videoId: "dQiNixBOK6Y",
+  },
+
   {
     icon: "🏆",
     tag: "2021",
     title: "Congreso LACE",
-    desc: "En el marco del Congreso 2021 de la Liga Latinoamericana Contra la Epilepsia (LACE), brindamos una charla sobre innovación y epilepsia centrada en el paciente. Realizamos también una charla con los doctores María del Carmen García y Santiago Flesler sobre la relación Médico-Paciente.",
+    desc: "En el marco del Congreso 2021 de la LIGA LATINOAMERICANA CONTRA LA EPILEPSIA, brindamos una charla sobre innovación y epilepsia centrada en el paciente. Asimismo, realizamos una charla con los doctores María del Carmen García y Santiago Flesler sobre la relación Médico – Paciente.",
     link: { label: "Ver LACE", href: "https://www.lace.org.ar/" },
-  },
-  {
-    icon: "🧠",
-    tag: "Tecnología",
-    title: "Healthtech: Emprender en Neurología",
-    desc: "Evento de tecnología en neurología junto al Corlab para promover los desarrollos vinculados a la epilepsia. Un espacio de encuentro entre emprendedores, investigadores y la comunidad.",
-    link: null,
-  },
-  {
-    icon: "🌍",
-    tag: "Internacional",
-    title: "International Bureau for Epilepsy (IBE)",
-    desc: "Somos capítulo asociado del IBE, la organización internacional de referencia en epilepsia, lo que nos permite conectar con la comunidad global y participar en iniciativas internacionales.",
-    link: { label: "Conocer el IBE", href: "https://www.ibe-epilepsy.org/" },
-  },
-  {
-    icon: "🏛️",
-    tag: "Legislativo",
-    title: "Senado de la Nación Argentina",
-    desc: "Llevamos la voz de la comunidad al Senado de la Nación Argentina para impulsar políticas que mejoren la calidad de vida de las personas con epilepsia en el país.",
-    link: null,
   },
 ];
 
@@ -63,21 +52,25 @@ export default function ColaboracionesPage() {
   return (
     <main>
       <Navbar />
-      <section style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <Link href="/programas" className="text-white/60 text-sm hover:text-white transition-colors mb-4 inline-flex items-center gap-1">← Volver a Programas</Link>
-          <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 mt-3">🔗 Programas</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Colaboraciones</h1>
-          <p className="text-lg text-white/70 max-w-2xl leading-relaxed">Trabajamos con otras organizaciones e instituciones para ampliar el impacto de la información sobre epilepsia en Argentina y Latinoamérica.</p>
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/programas" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver a Programas</Link>
+        </div>
+      </div>
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 bg-[#f5f0ff] border border-[#5c29c2]/20 text-[#5c29c2] text-xs font-bold px-4 py-1.5 rounded-full mb-6 mt-4">🔗 Programas</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">Colaboraciones</h1>
+          <p className="text-lg text-gray-600 max-w-2xl leading-relaxed text-center">Trabajamos con otras organizaciones e instituciones para ampliar el impacto de la información sobre epilepsia en Argentina y Latinoamérica.</p>
         </div>
       </section>
 
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col gap-6">
-            {colaboraciones.map(({ icon, tag, title, desc, link }, i) => (
+            {colaboraciones.map(({ icon, tag, title, desc, link, videoId }, i) => (
               <FadeIn key={title} delay={i * 80}>
-                <div className="bg-white border border-gray-100 rounded-2xl p-7 hover:border-[#5c29c2]/30 hover:shadow-sm transition-all flex gap-5">
+                <div className="bg-white border border-gray-100 rounded-2xl p-7 hover:border-[#5c29c2]/30 hover:shadow-sm transition-all flex flex-col md:flex-row gap-5">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl" style={{ background: "#f5f0ff" }}>{icon}</div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -85,6 +78,20 @@ export default function ColaboracionesPage() {
                       <span className="text-xs font-bold bg-[#f5f0ff] text-[#5c29c2] px-2.5 py-1 rounded-full">{tag}</span>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{desc}</p>
+
+                    {videoId && (
+                      <div className="relative w-full rounded-xl overflow-hidden shadow-sm bg-black mb-5" style={{ paddingTop: "56.25%" }}>
+                        <iframe
+                          className="absolute inset-0 w-full h-full"
+                          src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+                          title={`Video ${title}`}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    )}
+
                     {link && (
                       <a href={link.href} target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs font-bold text-[#5c29c2] hover:underline">

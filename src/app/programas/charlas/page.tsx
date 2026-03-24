@@ -74,12 +74,16 @@ export default function CharlasPage() {
   return (
     <main>
       <Navbar />
-      <section style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <Link href="/programas" className="text-white/60 text-sm hover:text-white transition-colors mb-4 inline-flex items-center gap-1">← Volver a Programas</Link>
-          <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-4 mt-3">💬 Programas</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Charlas online</h1>
-          <p className="text-lg text-white/70 max-w-2xl leading-relaxed">Para acercar información sobre epilepsia a la comunidad, entrevistamos a personas con epilepsia, investigadores, personal de salud, abogados y todos quienes nos aportan información sobre el mundo de la epilepsia.</p>
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/programas" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver a Programas</Link>
+        </div>
+      </div>
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 bg-[#f5f0ff] border border-[#5c29c2]/20 text-[#5c29c2] text-xs font-bold px-4 py-1.5 rounded-full mb-6 mt-4">💬 Programas</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">Charlas online</h1>
+          <p className="text-lg text-gray-600 max-w-2xl leading-relaxed text-center">Para acercar información sobre epilepsia a la comunidad, entrevistamos a personas con epilepsia, investigadores, personal de salud, abogados y todos quienes nos aportan información sobre el mundo de la epilepsia.</p>
         </div>
       </section>
 

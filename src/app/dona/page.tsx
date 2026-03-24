@@ -37,31 +37,35 @@ export default function DonaPage() {
   return (
     <main>
       <Navbar />
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver al Inicio</Link>
+        </div>
+      </div>
 
-      {/* HERO */}
-      <section style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 tracking-wider">💜 Ayudanos a crecer</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Doná y sembrá conciencia 💜</h1>
-          <p className="text-lg text-white/70 max-w-xl mx-auto leading-relaxed">En Fundación Espacio Epilepsia trabajamos cada día para que las personas con epilepsia vivan con más información, más autonomía, menos estigma y más herramientas para enfrentar los desafíos cotidianos.</p>
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 bg-[#f5f0ff] border border-[#5c29c2]/20 text-[#5c29c2] text-xs font-bold px-4 py-1.5 rounded-full mb-6 mt-4 tracking-wider">💜 Ayudanos a crecer</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">Doná y sembrá conciencia 💜</h1>
+          <p className="text-lg text-gray-600 max-w-xl mx-auto leading-relaxed text-center">En Fundación Espacio Epilepsia trabajamos cada día para que las personas con epilepsia vivan con más información, más autonomía, menos estigma y más herramientas para enfrentar los desafíos cotidianos.</p>
         </div>
       </section>
 
       {/* CON TU APORTE */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
           <FadeIn>
-            <h2 className="text-2xl font-extrabold mb-8 text-center">Con tu aporte, podés ayudarnos a seguir generando impacto real</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-12 text-center text-gray-900 leading-tight">Con tu aporte, nos ayudás a seguir<br className="hidden md:block" /> generando impacto real</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {[
-                { icon: "🎤", text: "Ofrecemos charlas abiertas, capacitaciones, talleres y materiales gratuitos para personas con epilepsia y sus familias" },
-                { icon: "🎉", text: "Organizamos eventos presenciales y virtuales que acercan contenidos valiosos sobre epilepsia y calidad de vida" },
-                { icon: "🎬", text: "Producimos contenidos audiovisuales accesibles, con historias reales y voces de nuestra comunidad" },
-                { icon: "🤝", text: "Acompañamos a quienes recién reciben el diagnóstico y no saben por dónde empezar" },
+                { icon: "🎤", text: "Ofrecemos charlas, talleres y materiales gratuitos para familias." },
+                { icon: "🎉", text: "Organizamos eventos que acercan contenidos valiosos sobre salud." },
+                { icon: "🎬", text: "Producimos contenidos con historias reales de nuestra comunidad." },
+                { icon: "🤝", text: "Acompañamos a quienes recién reciben su diagnóstico." },
               ].map(({ icon, text }) => (
-                <div key={text} className="flex gap-4 items-start bg-[#f5f0ff] border border-[#5c29c2]/10 rounded-2xl p-5">
-                  <span className="text-2xl flex-shrink-0">{icon}</span>
-                  <p className="text-sm text-gray-700 leading-relaxed">{text}</p>
+                <div key={text} className="bg-[#fcfaff] border border-[#5c29c2]/10 rounded-3xl p-8 flex flex-col items-center text-center hover:border-[#5c29c2]/30 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
+                  <span className="text-5xl mb-6 group-hover:scale-110 transition-transform">{icon}</span>
+                  <p className="text-lg font-bold text-gray-800 leading-snug">{text}</p>
                 </div>
               ))}
             </div>
@@ -104,23 +108,27 @@ export default function DonaPage() {
           </FadeIn>
 
           {/* POR QUÉ DONAR */}
-          <FadeIn delay={200}>
-            <h2 className="text-2xl font-extrabold mb-6 text-center">¿Por qué donar a nuestra fundación?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-12 text-center text-gray-900 leading-tight">¿Por qué donar a<br className="hidden md:block" /> nuestra fundación?</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {[
-                { icon: "🔍", title: "Transparencia", desc: "Somos una organización sin fines de lucro, transparente y liderada por personas con epilepsia y sus familias. Compartimos informes anuales de nuestras actividades." },
-                { icon: "🏛️", title: "Independencia", desc: "No estamos afiliados a clínicas, laboratorios ni partidos políticos. Nuestra independencia nos permite trabajar exclusivamente por los intereses de la comunidad." },
-                { icon: "💥", title: "Impacto directo", desc: "Cada peso se invierte en proyectos que visibilizan, acompañan y empoderan a la comunidad. Podés ver exactamente cómo tu donación hace la diferencia." },
-                { icon: "📊", title: "Rendición de cuentas", desc: "Publicamos anualmente nuestros estados financieros y reportes de impacto. Cada donante recibe información detallada sobre cómo su contribución se transformó en acciones concretas." },
+                { icon: "🔍", title: "Transparencia", desc: "Somos una organización sin fines de lucro liderada por pacientes." },
+                { icon: "🏛️", title: "Independencia", desc: "No estamos afiliados a clínicas ni laboratorios farmacéuticos." },
+                { icon: "💥", title: "Impacto directo", desc: "Cada aporte se invierte en proyectos que visibilizan y acompañan." },
+                { icon: "📊", title: "Rendición", desc: "Publicamos anualmente nuestros estados financieros y reportes." },
               ].map(({ icon, title, desc }) => (
-                <div key={title} className="bg-white border border-gray-100 rounded-2xl p-5">
-                  <div className="text-2xl mb-2">{icon}</div>
-                  <h3 className="font-bold mb-2">{title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+                <div key={title} className="bg-[#fcfaff] border border-[#5c29c2]/10 rounded-3xl p-8 flex flex-col items-center text-center hover:border-[#5c29c2]/30 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:scale-110 transition-transform">{icon}</div>
+                  <h3 className="text-xl font-extrabold mb-3 text-[#5c29c2]">{title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed font-medium">{desc}</p>
                 </div>
               ))}
             </div>
           </FadeIn>
+        </div>
+      </section>
 
           {/* COMPARTIR */}
           <FadeIn delay={250}>

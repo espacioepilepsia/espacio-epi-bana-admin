@@ -70,31 +70,35 @@ export default function BlogPostClient() {
   return (
     <main>
       <Navbar />
-      <section style={{ background: "#5c29c2" }}>
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <Link href="/blog" className="text-white/60 text-sm hover:text-white transition-colors mb-4 inline-flex items-center gap-1">
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-4xl mx-auto px-6 py-3">
+          <Link href="/blog" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">
             ← Volver al blog
           </Link>
-          <div className="flex items-center gap-3 mb-4 mt-3">
-            <span className="text-xs font-bold text-white bg-white/20 px-3 py-1 rounded-full uppercase tracking-wide">
+        </div>
+      </div>
+      <section className="pt-10 pb-4 px-6 bg-white">
+        <div className="max-w-3xl mx-auto text-left flex flex-col items-start">
+          <div className="flex items-center gap-3 mb-6 mt-2">
+            <span className="text-xs font-bold text-[#5c29c2] bg-[#f5f0ff] px-3 py-1.5 rounded-full uppercase tracking-wide">
               {post.category === "novedad" ? "Novedad" : post.category === "prensa" ? "Prensa" : "Blog"}
             </span>
             {post.published_at && (
-              <span className="text-sm text-white/60">{formatDate(post.published_at)}</span>
+              <span className="text-sm text-gray-500 font-medium">{formatDate(post.published_at)}</span>
             )}
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-4">
             {post.title}
           </h1>
           {post.excerpt && (
-            <p className="text-lg text-white/70 mt-4 leading-relaxed">{post.excerpt}</p>
+            <p className="text-lg text-gray-600 mt-2 leading-relaxed">{post.excerpt}</p>
           )}
         </div>
       </section>
 
       {post.cover_image_url && (
-        <div className="max-w-4xl mx-auto px-6 -mt-8 relative z-10">
-          <img src={post.cover_image_url} alt={post.title} className="w-full h-72 object-cover rounded-2xl shadow-lg" />
+        <div className="max-w-3xl mx-auto px-6 my-4 relative z-10">
+          <img src={post.cover_image_url} alt={post.title} className="w-full h-72 md:h-96 object-cover rounded-2xl shadow-sm border border-gray-100" />
         </div>
       )}
 

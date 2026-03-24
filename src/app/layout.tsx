@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import FloatingDonateButton from "@/components/FloatingDonateButton";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -207,6 +208,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col pt-[72px]">
         {children}
+        <FloatingDonateButton />
       </body>
     </html>
   );
