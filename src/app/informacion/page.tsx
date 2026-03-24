@@ -142,7 +142,7 @@ export default function InformacionPage() {
               <p className="text-base text-gray-600 leading-relaxed italic">"Una crisis de epilepsia es un cuadro clínico que se produce por una descarga eléctrica anormal de las neuronas, que puede manifestarse de diferentes formas dependiendo del lugar del cerebro donde se originan. La más conocida es la convulsión tonico-clónica generalizada, pero puede haber otros tipos como las crisis de ausencias."</p>
             </div>
             <h3 className="font-bold text-lg mb-4">Tipos de crisis más comunes</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-10">
               {[
                 { title: "Convulsión tónico-clónica", desc: "La más conocida. Involucra rigidez muscular seguida de movimientos convulsivos en todo el cuerpo." },
                 { title: "Crisis de ausencia", desc: "Episodios breves de pérdida de conciencia, la persona parece 'desconectarse' por unos segundos." },
@@ -157,6 +157,21 @@ export default function InformacionPage() {
                 </FadeIn>
               ))}
             </div>
+
+            {/* VIDEO DE YOUTUBE AGREGADO AQUÍ */}
+            <FadeIn delay={200}>
+              <div className="flex justify-center w-full">
+                <iframe
+                  className="w-full aspect-video rounded-2xl shadow-lg border border-gray-100"
+                  src="https://www.youtube.com/embed/vgRU4xeZ0v4"
+                  title="Video explicativo sobre qué es la epilepsia"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </FadeIn>
+            {/* FIN DEL VIDEO */}
+
           </FadeIn>
         </div>
       </section>
