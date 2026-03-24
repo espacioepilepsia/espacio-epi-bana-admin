@@ -3,6 +3,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 
 type View = "login" | "forgot" | "sent";
@@ -24,7 +25,7 @@ export default function AdminLoginPage() {
       setError("Email o contraseña incorrectos.");
       setLoading(false);
     } else {
-      router.push("/admin");
+      router.push("/epipanel");
     }
   }
 
@@ -33,7 +34,7 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/admin/reset-password`,
+      redirectTo: `${window.location.origin}/epipanel/reset-password`,
     });
     setLoading(false);
     if (error) {
@@ -47,14 +48,7 @@ export default function AdminLoginPage() {
     <main className="min-h-screen flex items-center justify-center px-6" style={{ background: "#f5f0ff" }}>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style={{ background: "#5c29c2" }}>
-            <svg height="36" viewBox="0 0 220 60" fill="none">
-              <text x="4" y="28" fontFamily="Plus Jakarta Sans, sans-serif" fontSize="14" fontWeight="400" fill="white" letterSpacing="4">ESPACIO</text>
-              <text x="4" y="56" fontFamily="Plus Jakarta Sans, sans-serif" fontSize="30" fontWeight="800" fill="white">EPILE</text>
-              <polygon points="128,26 121,44 128,44 121,60 140,38 132,38 140,26" fill="white" />
-              <text x="140" y="56" fontFamily="Plus Jakarta Sans, sans-serif" fontSize="30" fontWeight="800" fill="white">IA</text>
-            </svg>
-          </div>
+          <Image src="/images/logo-admin.png" alt="Espacio Epilepsia" width={220} height={80} className="mx-auto mb-6 w-auto h-16 object-contain" />
           <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Panel de administración</h1>
           <p className="text-sm text-gray-500">Espacio Epilepsia · Acceso restringido</p>
         </div>

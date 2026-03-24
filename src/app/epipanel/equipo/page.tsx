@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import AdminImageUploader from "@/components/AdminImageUploader";
 
 type Member = { id: string; name: string; role: string; bio: string | null; photo_url: string | null; display_order: number; is_active: boolean; };
 type FormData = { name: string; role: string; bio: string; photo_url: string; display_order: string; is_active: boolean; };
@@ -57,8 +58,10 @@ export default function AdminEquipoPage() {
               <input value={form.role} onChange={e => setForm({...form, role: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="Fundadora / Coordinadora / etc." /></div>
             <div className="md:col-span-2"><label className="text-xs font-semibold text-gray-600 mb-1 block">Bio</label>
               <textarea value={form.bio} onChange={e => setForm({...form, bio: e.target.value})} rows={3} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2] resize-none" /></div>
-            <div><label className="text-xs font-semibold text-gray-600 mb-1 block">URL foto</label>
-              <input value={form.photo_url} onChange={e => setForm({...form, photo_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://..." /></div>
+            <div className="md:col-span-2">
+              <label className="text-xs font-semibold text-gray-600 mb-1 block">Foto del Integrante</label>
+              <AdminImageUploader value={form.photo_url} onChange={(url) => setForm({...form, photo_url: url})} label="Subir Foto (.png)" />
+            </div>
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Orden</label>
               <input type="number" value={form.display_order} onChange={e => setForm({...form, display_order: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" /></div>
             <div className="flex items-center gap-3">

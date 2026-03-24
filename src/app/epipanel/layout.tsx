@@ -3,18 +3,20 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: "📊", exact: true },
-  { href: "/admin/eventos", label: "Eventos", icon: "📅" },
-  { href: "/admin/blog", label: "Blog", icon: "✍️" },
-  { href: "/admin/organizaciones", label: "Organizaciones", icon: "🤝" },
-  { href: "/admin/productos", label: "Tienda", icon: "🛍️" },
-  { href: "/admin/equipo", label: "Equipo", icon: "👥" },
-  { href: "/admin/mensajes", label: "Mensajes", icon: "📩" },
-  { href: "/admin/historias", label: "Historias", icon: "💬" },
-  { href: "/admin/configuracion", label: "Configuración", icon: "⚙️" },
+  { href: "/epipanel", label: "Dashboard", icon: "📊", exact: true },
+  { href: "/epipanel/eventos", label: "Eventos", icon: "📅" },
+  { href: "/epipanel/blog", label: "Blog", icon: "✍️" },
+  { href: "/epipanel/organizaciones", label: "Organizaciones", icon: "🤝" },
+  { href: "/epipanel/productos", label: "Tienda", icon: "🛍️" },
+  { href: "/epipanel/equipo", label: "Equipo", icon: "👥" },
+  { href: "/epipanel/mensajes", label: "Mensajes", icon: "📩" },
+  { href: "/epipanel/historias", label: "Historias", icon: "💬" },
+  { href: "/epipanel/comunidad", label: "Comunidad", icon: "🗣️" },
+  { href: "/epipanel/configuracion", label: "Configuración", icon: "⚙️" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -26,8 +28,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session && pathname !== "/admin/login") {
-        router.push("/admin/login");
+      if (!session && pathname !== "/epipanel/login") {
+        router.push("/epipanel/login");
       } else {
         setUser(session?.user?.email ?? null);
         setChecking(false);
@@ -37,10 +39,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   async function handleLogout() {
     await supabase.auth.signOut();
-    router.push("/admin/login");
+    router.push("/epipanel/login");
   }
 
-  if (pathname === "/admin/login") return <>{children}</>;
+  if (pathname === "/epipanel/login") return <>{children}</>;
   if (checking) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="animate-spin w-8 h-8 border-2 border-[#5c29c2] border-t-transparent rounded-full" />
@@ -52,17 +54,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* SIDEBAR DESKTOP */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-100 min-h-screen">
         <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "#5c29c2" }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="2" fill="white" stroke="none" /></svg>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[#5c29c2] p-2 shadow-inner">
+              <Image src="/images/icon-heart.png" alt="Espacio Epilepsia" width={32} height={32} className="w-full h-full object-contain" />
             </div>
             <span className="font-bold text-gray-900 text-sm">Espacio Epilepsia</span>
           </div>
-          <p className="text-xs text-gray-400 ml-10">Panel de administración</p>
+          <p className="text-xs text-gray-400 ml-12">Panel de administración</p>
         </div>
         <nav className="flex-1 p-4 flex flex-col gap-1">
           {navItems.map(({ href, label, icon, exact }) => {
-            const isActive = exact ? pathname === href : pathname.startsWith(href) && pathname !== "/admin";
+            const isActive = exact ? pathname === href : pathname.startsWith(href) && pathname !== "/epipanel";
             const active = exact ? pathname === href : isActive;
             return (
               <Link key={href} href={href}

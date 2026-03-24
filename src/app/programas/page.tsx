@@ -2,27 +2,11 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useRef, useEffect, useState } from "react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-function useInView(ref: React.RefObject<HTMLElement>) {
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold: 0.1 });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [ref]);
-  return inView;
-}
-function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref as React.RefObject<HTMLElement>);
-  return <div ref={ref} style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms` }}>{children}</div>;
-}
-
-export default function ProgramasPage() {
+import FadeIn from "@/components/FadeIn";export default function ProgramasPage() {
   return (
     <main>
       <Navbar />

@@ -32,21 +32,21 @@ export default function AdminDashboard() {
   }, []);
 
   const cards = [
-    { label: "Eventos publicados", value: stats.eventos, icon: "📅", href: "/admin/eventos", color: "#5c29c2" },
-    { label: "Posts publicados", value: stats.posts, icon: "✍️", href: "/admin/blog", color: "#7c3aed" },
-    { label: "Mensajes sin leer", value: stats.mensajes, icon: "📩", href: "/admin/mensajes", color: stats.mensajes > 0 ? "#dc2626" : "#6b7280" },
-    { label: "Suscriptores activos", value: stats.suscriptores, icon: "📧", href: "/admin/mensajes", color: "#059669" },
-    { label: "Organizaciones activas", value: stats.organizaciones, icon: "🤝", href: "/admin/organizaciones", color: "#d97706" },
-    { label: "Historias pendientes", value: stats.historias, icon: "💬", href: "/admin/historias", color: stats.historias > 0 ? "#dc2626" : "#6b7280" },
+    { label: "Eventos publicados", value: stats.eventos, icon: "📅", href: "/epipanel/eventos", color: "#5c29c2" },
+    { label: "Posts publicados", value: stats.posts, icon: "✍️", href: "/epipanel/blog", color: "#7c3aed" },
+    { label: "Mensajes sin leer", value: stats.mensajes, icon: "📩", href: "/epipanel/mensajes", color: stats.mensajes > 0 ? "#dc2626" : "#6b7280" },
+    { label: "Suscriptores activos", value: stats.suscriptores, icon: "📧", href: "/epipanel/mensajes", color: "#059669" },
+    { label: "Organizaciones activas", value: stats.organizaciones, icon: "🤝", href: "/epipanel/organizaciones", color: "#d97706" },
+    { label: "Historias pendientes", value: stats.historias, icon: "💬", href: "/epipanel/historias", color: stats.historias > 0 ? "#dc2626" : "#6b7280" },
   ];
 
   const accesos = [
-    { href: "/admin/eventos", icon: "📅", label: "Nuevo evento" },
-    { href: "/admin/blog", icon: "✍️", label: "Nueva nota" },
-    { href: "/admin/organizaciones", icon: "🤝", label: "Nueva organización" },
-    { href: "/admin/productos", icon: "🛍️", label: "Nuevo producto" },
-    { href: "/admin/equipo", icon: "👥", label: "Nuevo integrante" },
-    { href: "/admin/mensajes", icon: "📩", label: "Ver mensajes" },
+    { href: "/epipanel/eventos", icon: "📅", label: "Nuevo evento" },
+    { href: "/epipanel/blog", icon: "✍️", label: "Nueva nota" },
+    { href: "/epipanel/organizaciones", icon: "🤝", label: "Nueva organización" },
+    { href: "/epipanel/productos", icon: "🛍️", label: "Nuevo producto" },
+    { href: "/epipanel/equipo", icon: "👥", label: "Nuevo integrante" },
+    { href: "/epipanel/mensajes", icon: "📩", label: "Ver mensajes" },
   ];
 
   return (

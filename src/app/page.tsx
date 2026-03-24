@@ -8,29 +8,11 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FadeIn from "@/components/FadeIn";
+import TestimonialsSection from "@/components/TestimonialsSection";
 
 type Event = { id: string; title: string; event_date: string; location: string | null; registration_url: string | null; };
 
-function useInView(ref: React.RefObject<HTMLElement>) {
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold: 0.1 });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [ref]);
-  return inView;
-}
-
-function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref as React.RefObject<HTMLElement>);
-  return (
-    <div ref={ref} className={className} style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(28px)", transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -114,27 +96,27 @@ export default function Home() {
         <Navbar />
 
         {/* HERO */}
-        <section className="min-h-screen flex items-center justify-center px-6 text-center" style={{ background: "#5c29c2" }}>
-          <div className="max-w-3xl mx-auto">
-            <div className="heart-beat inline-block mb-6">
-              <Image src="/images/icon-heart.png" alt="" width={120} height={120} className="mx-auto" />
+        <section className="min-h-screen flex items-center justify-center px-6 text-center pt-16 pb-12" style={{ background: "#5c29c2" }}>
+          <div className="max-w-4xl mx-auto">
+            <div className="heart-beat inline-block mb-8">
+              <Image src="/images/icon-heart.png" alt="" width={150} height={150} className="mx-auto" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-8">
               Bienvenidos a la comunidad de{" "}
               <span className="underline-anim" style={{ color: "#29f0b4" }}>Espacio Epilepsia</span>
             </h1>
-            <p className="text-lg text-white/80 leading-relaxed max-w-2xl mx-auto mb-8">
+            <p className="text-xl md:text-2xl text-white/80 leading-relaxed max-w-3xl mx-auto mb-10">
               Espacio Epilepsia es una plataforma digital con el objetivo de{" "}
               <span className="underline-anim-slide font-bold text-white">informar</span>, compartir experiencias y{" "}
               <span className="underline-anim-slide font-bold text-white">contener</span> a las personas con epilepsia, sus familiares y amigos.
             </p>
-            <div className="flex flex-wrap gap-3 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center mt-6">
               <Link href="/informacion"
-                className="bg-white text-[#5c29c2] font-bold px-7 py-3 rounded-full hover:bg-[#29f0b4] hover:text-white transition-all">
+                className="bg-white text-[#5c29c2] font-black px-8 py-4 text-lg rounded-full hover:bg-[#29f0b4] hover:text-[#5c29c2] hover:scale-105 active:scale-95 transition-all shadow-lg">
                 Conocé más
               </Link>
               <Link href="/sumate"
-                className="bg-transparent text-white font-bold px-7 py-3 rounded-full border-2 border-white/40 hover:bg-white/10 transition-all">
+                className="bg-transparent text-white font-black px-8 py-4 text-lg rounded-full border-2 border-white/40 hover:bg-white/10 hover:border-white transition-all">
                 Sumate a la comunidad
               </Link>
             </div>
@@ -180,12 +162,15 @@ export default function Home() {
                 Acercamos a las personas con epilepsia, creando comunidades, grupos de WhatsApp, realizando charlas en vivo en Instagram. Contamos historias de personas con epilepsia que estudian, trabajan, son madres, padres, tienen días buenos y malos ¡Cómo todos! Y muchas actividades más...
               </p>
               <Link href="/sumate"
-                className="inline-block bg-[#f97316] text-white font-bold px-8 py-3 rounded-full hover:bg-[#ea580c] transition-all text-lg">
+                className="inline-block bg-[#f97316] text-white font-bold px-8 py-3 rounded-full hover:bg-[#ea580c] transition-all text-lg shadow-md hover:scale-105">
                 ¡Sumate a la comunidad!
               </Link>
             </FadeIn>
           </div>
         </section>
+
+        {/* TESTIMONIOS */}
+        <TestimonialsSection />
 
         {/* VIDEO YOUTUBE */}
         <section className="py-20 px-6" style={{ background: "#5c29c2" }}>

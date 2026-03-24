@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import AdminImageUploader from "@/components/AdminImageUploader";
 
 type Org = { id: string; name: string; logo_url: string | null; website_url: string | null; description: string | null; is_active: boolean; };
 type FormData = { name: string; logo_url: string; website_url: string; description: string; is_active: boolean; };
@@ -53,8 +54,12 @@ export default function AdminOrganizacionesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2"><label className="text-xs font-semibold text-gray-600 mb-1 block">Nombre *</label>
               <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="Nombre de la organización" /></div>
-            <div><label className="text-xs font-semibold text-gray-600 mb-1 block">URL del logo</label>
-              <input value={form.logo_url} onChange={e => setForm({...form, logo_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://..." /></div>
+            
+            <div className="md:col-span-2">
+              <label className="text-xs font-semibold text-gray-600 mb-1 block">Logo de la organización</label>
+              <AdminImageUploader value={form.logo_url} onChange={(url) => setForm({...form, logo_url: url})} label="Subir Logo (.png)" />
+            </div>
+
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">URL del sitio web</label>
               <input value={form.website_url} onChange={e => setForm({...form, website_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://..." /></div>
             <div className="md:col-span-2"><label className="text-xs font-semibold text-gray-600 mb-1 block">Descripción</label>

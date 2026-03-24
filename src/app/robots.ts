@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/admin/login", "/admin/reset-password"],
+        disallow: ["/epipanel/", "/epipanel/login", "/epipanel/reset-password"],
       },
     ],
     sitemap: "https://espacioepilepsia.org/sitemap.xml",

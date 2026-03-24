@@ -53,7 +53,7 @@ export default function SumatePage() {
       <Navbar />
       <div className="bg-[#5c29c2] pt-[72px]">
         <div className="max-w-6xl mx-auto px-6 py-3">
-          <Link href="/comunidad" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver a Comunidad</Link>
+          <Link href="/" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver al Inicio</Link>
         </div>
       </div>
 

@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import AdminImageUploader from "@/components/AdminImageUploader";
 
 type Product = { id: string; name: string; price: number; category: string; is_active: boolean; display_order: number; };
 type FormData = { name: string; description: string; price: string; image_url: string; mercadopago_url: string; category: string; is_active: boolean; display_order: string; };
@@ -65,8 +66,10 @@ export default function AdminProductosPage() {
               <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]">
                 <option value="remera">Remera</option><option value="taza">Taza</option><option value="general">General</option>
               </select></div>
-            <div><label className="text-xs font-semibold text-gray-600 mb-1 block">URL imagen</label>
-              <input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://..." /></div>
+            <div className="md:col-span-2">
+              <label className="text-xs font-semibold text-gray-600 mb-1 block">Imagen del Producto</label>
+              <AdminImageUploader value={form.image_url} onChange={(url) => setForm({...form, image_url: url})} label="Subir Imagen de Producto (.png)" />
+            </div>
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Link Mercado Pago</label>
               <input value={form.mercadopago_url} onChange={e => setForm({...form, mercadopago_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://mpago.la/..." /></div>
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Orden de aparición</label>

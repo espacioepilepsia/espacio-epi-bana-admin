@@ -38,7 +38,7 @@ export default function ResetPasswordPage() {
       setError("No se pudo actualizar la contraseña. Intentá de nuevo.");
       setLoading(false);
     } else {
-      router.push("/admin/login?reset=ok");
+      router.push("/epipanel/login?reset=ok");
     }
   }
 
@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
             <div className="text-center py-4">
               <div className="text-4xl mb-4">⚠️</div>
               <p className="text-sm text-red-600 mb-6">{error}</p>
-              <a href="/admin/login"
+              <a href="/epipanel/login"
                 className="bg-[#5c29c2] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#7c3aed] transition-all inline-block text-sm">
                 Volver al login
               </a>

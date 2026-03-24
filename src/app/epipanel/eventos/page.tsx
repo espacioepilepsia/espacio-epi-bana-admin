@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import AdminImageUploader from "@/components/AdminImageUploader";
 
 type Event = { id: string; title: string; event_date: string; location: string | null; is_published: boolean; };
 type FormData = { title: string; description: string; event_date: string; location: string; image_url: string; registration_url: string; is_published: boolean; };
@@ -95,11 +96,9 @@ export default function AdminEventosPage() {
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]"
                 placeholder="CABA / Online / etc." />
             </div>
-            <div>
+            <div className="md:col-span-2">
               <label className="text-xs font-semibold text-gray-600 mb-1 block">URL imagen</label>
-              <input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]"
-                placeholder="https://..." />
+              <AdminImageUploader value={form.image_url} onChange={(url) => setForm({...form, image_url: url})} label="Subir Imagen de Evento (.png)" />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-600 mb-1 block">URL inscripción</label>

@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import AdminImageUploader from "@/components/AdminImageUploader";
 
 type Post = { id: string; title: string; slug: string; category: string; is_published: boolean; published_at: string | null; };
 type FormData = { title: string; slug: string; excerpt: string; content: string; cover_image_url: string; category: string; is_published: boolean; published_at: string; };
@@ -70,9 +71,11 @@ export default function AdminBlogPage() {
               <textarea value={form.excerpt} onChange={e => setForm({...form, excerpt: e.target.value})} rows={2} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2] resize-none" placeholder="Resumen breve del artículo" /></div>
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Contenido</label>
               <textarea value={form.content} onChange={e => setForm({...form, content: e.target.value})} rows={10} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2] resize-none" placeholder="Contenido del artículo..." /></div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Imagen portada</label>
-                <input value={form.cover_image_url} onChange={e => setForm({...form, cover_image_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://..." /></div>
+            <div className="md:col-span-3">
+              <label className="text-xs font-semibold text-gray-600 mb-1 block">Imagen portada</label>
+              <AdminImageUploader value={form.cover_image_url} onChange={(url) => setForm({...form, cover_image_url: url})} label="Subir Portada (.png)" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Categoría</label>
                 <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]">
                   <option value="blog">Blog</option><option value="novedad">Novedad</option><option value="prensa">Prensa</option>
