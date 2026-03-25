@@ -19,6 +19,11 @@ const whatsappDef = [
   { id: "whatsapp_message", label: "Mensaje Automático", type: "text", placeholder: "¡Hola! Quisiera más información..." },
 ];
 
+const trackingDef = [
+  { id: "tracking_ga", label: "Google Analytics (GA4) ID", type: "text", placeholder: "Ej: G-XXXXXXXX", description: "Pegá solo el identificador G-XXXX, no el código completo." },
+  { id: "tracking_gtm", label: "Google Tag Manager ID", type: "text", placeholder: "Ej: GTM-XXXXXXX", description: "Pegá solo el identificador GTM-XXXX." },
+];
+
 export default function AdminConfiguracionPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -37,7 +42,7 @@ export default function AdminConfiguracionPage() {
   async function handleSave() {
     setSaving(true);
     await Promise.all(
-      [...settingsDef, ...whatsappDef].map(({ id, label }) =>
+      [...settingsDef, ...whatsappDef, ...trackingDef].map(({ id, label }) =>
         supabase.from("site_settings").upsert({ id, value: settings[id] ?? "", label }, { onConflict: "id" })
       )
     );
@@ -50,7 +55,7 @@ export default function AdminConfiguracionPage() {
     <div className="p-6 max-w-2xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Configuración</h1>
-        <p className="text-sm text-gray-500">Gestioná los links de redes sociales del sitio</p>
+        <p className="text-sm text-gray-500">Gestioná los links, integraciones y variables generales del sitio.</p>
       </div>
 
       <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
@@ -85,6 +90,7 @@ export default function AdminConfiguracionPage() {
         )}
       </div>
 
+      {/* BLOQUE DE WA */}
       <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-6">
         <h2 className="font-bold text-base mb-5 flex items-center gap-2">
           <span>💬</span> Configuración de WhatsApp
@@ -132,28 +138,59 @@ export default function AdminConfiguracionPage() {
         )}
       </div>
       
+      {/* BLOQUE DE TRACKING */}
+      <div className="bg-white border border-[#5c29c2]/20 rounded-2xl p-6 shadow-sm mt-6">
+        <h2 className="font-bold text-base mb-5 flex items-center gap-2 text-[#5c29c2]">
+          <span>📈</span> Tracking y Analítica
+        </h2>
+        
+        <p className="text-xs text-gray-500 mb-6 bg-yellow-50 p-3 rounded-xl border border-yellow-200">
+          <strong>Seguridad:</strong> Para prevenir ataques, debés pegar <strong>únicamente el código identificador</strong> y no las etiquetas completas de &lt;script&gt;.
+        </p>
+
+        {loading ? (
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="h-12 bg-gray-100 rounded-xl animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-5">
+            {trackingDef.map(({ id, label, type, placeholder, description }) => (
+              <div key={id}>
+                <label className="text-xs font-bold text-[#5c29c2] mb-1.5 block">{label}</label>
+                <div className="relative">
+                  <input
+                    type={type}
+                    value={settings[id] ?? ""}
+                    onChange={e => setSettings({ ...settings, [id]: e.target.value.trim() })}
+                    className="w-full border border-[#5c29c2]/20 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2] focus:ring-2 focus:ring-[#5c29c2]/20 transition-all font-mono bg-[#fcfaff]"
+                    placeholder={placeholder}
+                  />
+                </div>
+                <p className="text-[11px] text-gray-400 mt-1.5">{description}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-6">
         <div className="flex flex-col gap-4">
           {saved && (
-            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700 flex items-center gap-2">
-              <span>✓</span> Cambios guardados correctamente
+            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700 font-medium flex items-center gap-2">
+              <span className="bg-green-100 text-green-600 rounded-full w-5 h-5 flex items-center justify-center text-xs">✓</span> Los cambios se aplicaron correctamente al sitio.
             </div>
           )}
 
           <button
             onClick={handleSave}
             disabled={saving || loading}
-            className="bg-[#5c29c2] text-white font-bold py-3 rounded-xl hover:bg-[#7c3aed] transition-all disabled:opacity-50 mt-2"
+            className="bg-[#5c29c2] text-white font-extrabold py-3.5 rounded-xl hover:bg-[#4a1fa0] hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none w-full text-[15px] shadow-sm flex items-center justify-center gap-2"
           >
-            {saving ? "Guardando..." : "Guardar cambios"}
+            {saving ? "Guardando..." : "Guardar toda la configuración"}
           </button>
         </div>
-      </div>
-
-      <div className="bg-[#f5f0ff] border border-[#5c29c2]/15 rounded-2xl p-5 mt-6">
-        <p className="text-xs text-gray-500 leading-relaxed">
-          <strong className="text-[#5c29c2]">Nota:</strong> Los cambios en las redes sociales se reflejan en el footer de todas las páginas del sitio. Asegurate de pegar la URL completa incluyendo <code className="bg-white px-1 rounded">https://</code>
-        </p>
       </div>
     </div>
   );

@@ -33,22 +33,6 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
         </div>
         
         <div className="p-6 md:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
-          {/* Quick Links */}
-          <div className="grid grid-cols-2 gap-4">
-            <a href="https://link.mercadopago.com.ar/espacioepilepsia" target="_blank" rel="noopener noreferrer" className="bg-[#009EE3]/10 hover:bg-[#009EE3]/20 border border-[#009EE3]/30 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all group">
-               <span className="font-bold text-[#009EE3] text-sm group-hover:scale-105 transition-transform">Mercado Pago</span>
-            </a>
-            <a href="https://cafecito.app/espacioepilepsia" target="_blank" rel="noopener noreferrer" className="bg-[#00d075]/10 hover:bg-[#00d075]/20 border border-[#00d075]/30 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all group">
-               <span className="font-bold text-[#00d075] text-sm group-hover:scale-105 transition-transform">Cafecito</span>
-            </a>
-          </div>
-
-          <div className="relative flex py-2 items-center">
-             <div className="flex-grow border-t border-gray-200"></div>
-             <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold uppercase tracking-wider">O Transferencia</span>
-             <div className="flex-grow border-t border-gray-200"></div>
-          </div>
-
           {/* Transferencia Banco Macro */}
           <div className={`border rounded-2xl overflow-hidden transition-all ${openAccordion === 'macro' ? "border-[#5c29c2]" : "border-gray-100 hover:border-[#5c29c2]/30"}`}>
             <button onClick={() => toggleAccordion('macro')} className="w-full flex items-center justify-between p-4 bg-[#fcfaff]">
@@ -117,6 +101,22 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="relative flex py-2 items-center">
+             <div className="flex-grow border-t border-gray-200"></div>
+             <span className="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold uppercase tracking-wider">O MEDIANTE APP</span>
+             <div className="flex-grow border-t border-gray-200"></div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="grid grid-cols-2 gap-4">
+            <a href="https://link.mercadopago.com.ar/espacioepilepsia" target="_blank" rel="noopener noreferrer" className="bg-[#009EE3]/10 hover:bg-[#009EE3]/20 border border-[#009EE3]/30 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all group">
+               <span className="font-bold text-[#009EE3] text-sm group-hover:scale-105 transition-transform">Mercado Pago</span>
+            </a>
+            <a href="https://cafecito.app/espacioepilepsia" target="_blank" rel="noopener noreferrer" className="bg-[#00d075]/10 hover:bg-[#00d075]/20 border border-[#00d075]/30 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all group">
+               <span className="font-bold text-[#00d075] text-sm group-hover:scale-105 transition-transform">Cafecito</span>
+            </a>
           </div>
 
         </div>
