@@ -14,6 +14,7 @@ export default function AdminMensajesPage() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Message | null>(null);
   const [filter, setFilter] = useState<"all" | "unread">("unread");
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
   async function load() {
     const { data } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
@@ -60,7 +61,9 @@ export default function AdminMensajesPage() {
             {selected.message || "Sin mensaje"}
           </div>
           <div className="flex gap-3">
-            <a href={`mailto:${selected.email}`} className="bg-[#5c29c2] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all">Responder por email</a>
+            <button onClick={() => setReplyingTo(selected)} className="bg-[#5c29c2] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all">
+              Responder
+            </button>
             {!selected.is_read && <button onClick={() => markRead(selected.id)} className="bg-gray-100 text-gray-600 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-200 transition-all">Marcar como leído</button>}
           </div>
         </div>
@@ -89,6 +92,65 @@ export default function AdminMensajesPage() {
           ))}
         </div>
       )}
+
+      {replyingTo && (
+        <ReplyModal 
+          msg={replyingTo} 
+          onClose={() => setReplyingTo(null)} 
+        />
+      )}
     </div>
   );
 }
+
+function ReplyModal({ msg, onClose }: { msg: Message, onClose: () => void }) {
+  const [sending, setSending] = useState(false);
+  const [text, setText] = useState(`Hola ${msg.name},\n\nRespondiendo a tu consulta:\n> ${msg.message?.replace(/\n/g, "\n> ")}\n\n`);
+
+  async function sendReply() {
+    if (!text.trim()) return;
+    setSending(true);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: msg.email,
+          subject: "Respuesta a tu consulta - Espacio Epilepsia",
+          text,
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al enviar");
+      alert("Mail enviado correctamente!");
+      onClose();
+    } catch (e: any) {
+      alert("Error: " + e.message);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-extrabold">Responder a {msg.name}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-black font-bold">✕</button>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">Para: <strong className="text-black">{msg.email}</strong></p>
+        <textarea
+          value={text}
+          onChange={e => setText(e.target.value)}
+          className="w-full h-48 border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:border-[#5c29c2] mb-4"
+        />
+        <div className="flex justify-end gap-2">
+          <button onClick={onClose} className="px-5 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 text-sm">Cancelar</button>
+          <button onClick={sendReply} disabled={sending} className="px-5 py-2.5 rounded-xl font-bold text-white bg-[#5c29c2] hover:bg-[#7c3aed] text-sm disabled:opacity-50">
+            {sending ? "Enviando..." : "Enviar Respuesta"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

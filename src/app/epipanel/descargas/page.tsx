@@ -5,9 +5,9 @@ import { supabase } from "@/lib/supabase";
 
 type Download = { id: string; nombre: string; apellido: string; email: string; recurso: string; created_at: string };
 type Subscriber = { id: string; email: string; is_active: boolean; created_at: string };
-type Message = { id: string; name: string; email: string; phone: string | null; message: string | null; created_at: string };
+type Message = { id: string; name: string; email: string; phone: string | null; message: string | null; location?: string | null; experience?: string | null; created_at: string };
 
-type Tab = "descargas" | "newsletter" | "contacto";
+type Tab = "descargas" | "newsletter" | "voluntarios";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -20,6 +20,7 @@ export default function LeadsPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -36,7 +37,10 @@ export default function LeadsPage() {
       ]);
       setDownloads(dl.data ?? []);
       setSubscribers(nl.data ?? []);
-      setMessages(msg.data ?? []);
+      
+      // Filtrar sólo voluntarios
+      const allMsgs: Message[] = msg.data ?? [];
+      setMessages(allMsgs.filter(m => m.message?.startsWith("QUIERO SUMARME:")));
       setLoading(false);
     }
     load();
@@ -50,7 +54,7 @@ export default function LeadsPage() {
     } else if (type === "newsletter") {
       csv = ["Email,Activo,Fecha", ...subscribers.map(s => `"${s.email}","${s.is_active ? "Sí" : "No"}","${formatDate(s.created_at)}"`)].join("\n");
     } else {
-      csv = ["Nombre,Email,Teléfono,Mensaje,Fecha", ...messages.map(m => `"${m.name}","${m.email}","${m.phone || ""}","${(m.message || "").replace(/"/g, '""')}","${formatDate(m.created_at)}"`)].join("\n");
+      csv = ["Nombre,Email,Teléfono,Ubicación,Experiencia,Mensaje,Fecha", ...messages.map(m => `"${m.name}","${m.email}","${m.phone || ""}","${m.location || ""}","${m.experience?.replace(/"/g, '""') || ""}","${(m.message || "").replace(/"/g, '""')}","${formatDate(m.created_at)}"`)].join("\n");
     }
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -64,7 +68,7 @@ export default function LeadsPage() {
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "descargas", label: "Descargas", count: downloads.length },
     { key: "newsletter", label: "Newsletter", count: subscribers.length },
-    { key: "contacto", label: "Contacto", count: messages.length },
+    { key: "voluntarios", label: "Voluntarios", count: messages.length },
   ];
 
   return (
@@ -141,21 +145,32 @@ export default function LeadsPage() {
             )
           )}
 
-          {/* CONTACTO */}
-          {tab === "contacto" && (
-            messages.length === 0 ? <EmptyState text="No hay mensajes todavía. 💬" /> : (
+          {/* VOLUNTARIOS */}
+          {tab === "voluntarios" && (
+            messages.length === 0 ? <EmptyState text="Todavía no hay voluntarios registrados. 💬" /> : (
               <Table>
                 <thead><tr className="border-b border-gray-100 bg-gray-50">
-                  <Th>Nombre</Th><Th>Email</Th><Th>Teléfono</Th><Th>Mensaje</Th><Th>Fecha</Th>
+                  <Th>Nombre</Th><Th>Email/Tel</Th><Th>Exp/Ubicación</Th><Th>Mensaje</Th><Th>Fecha</Th><Th>Acción</Th>
                 </tr></thead>
                 <tbody>
                   {messages.map(m => (
                     <tr key={m.id} className="border-b border-gray-50 hover:bg-[#f5f0ff]/50 transition-colors">
                       <Td><span className="font-semibold text-gray-900">{m.name}</span></Td>
-                      <Td><a href={`mailto:${m.email}`} className="text-[#5c29c2] hover:underline">{m.email}</a></Td>
-                      <Td><span className="text-gray-500">{m.phone || "—"}</span></Td>
-                      <Td><span className="text-gray-600 text-xs line-clamp-2">{m.message || "—"}</span></Td>
+                      <Td>
+                        <div className="text-[#5c29c2]">{m.email}</div>
+                        <div className="text-gray-500 text-xs">{m.phone || "Sin tel."}</div>
+                      </Td>
+                      <Td>
+                        <div className="font-medium text-gray-800 text-xs">{m.location || "—"}</div>
+                        <div className="text-gray-500 text-xs line-clamp-1" title={m.experience || ""}>{m.experience || "Sin experiencia esp."}</div>
+                      </Td>
+                      <Td><span className="text-gray-600 text-xs line-clamp-2" title={m.message || ""}>{m.message?.replace("QUIERO SUMARME: ", "") || "—"}</span></Td>
                       <Td>{formatDate(m.created_at)}</Td>
+                      <Td>
+                        <button onClick={() => setReplyingTo(m)} className="text-xs font-bold bg-[#f5f0ff] text-[#5c29c2] hover:bg-[#5c29c2] hover:text-white transition-colors px-3 py-1.5 rounded-full">
+                          Responder
+                        </button>
+                      </Td>
                     </tr>
                   ))}
                 </tbody>
@@ -163,6 +178,13 @@ export default function LeadsPage() {
             )
           )}
         </>
+      )}
+
+      {replyingTo && (
+        <ReplyModal 
+          msg={replyingTo} 
+          onClose={() => setReplyingTo(null)} 
+        />
       )}
     </div>
   );
@@ -184,4 +206,56 @@ function Td({ children }: { children: React.ReactNode }) {
 }
 function EmptyState({ text }: { text: string }) {
   return <div className="text-center py-16 text-gray-400 bg-white rounded-2xl border border-gray-100">{text}</div>;
+}
+
+function ReplyModal({ msg, onClose }: { msg: Message, onClose: () => void }) {
+  const [sending, setSending] = useState(false);
+  const [text, setText] = useState(`Hola ${msg.name},\n\nRespondiendo a tu consulta:\n> ${msg.message?.replace(/\n/g, "\n> ")}\n\n`);
+
+  async function sendReply() {
+    if (!text.trim()) return;
+    setSending(true);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: msg.email,
+          subject: "Respuesta a tu consulta - Espacio Epilepsia",
+          text,
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al enviar");
+      alert("Mail enviado correctamente!");
+      onClose();
+    } catch (e: any) {
+      alert("Error: " + e.message);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-extrabold">Responder a {msg.name}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-black font-bold">✕</button>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">Para: <strong className="text-black">{msg.email}</strong></p>
+        <textarea
+          value={text}
+          onChange={e => setText(e.target.value)}
+          className="w-full h-48 border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:border-[#5c29c2] mb-4"
+        />
+        <div className="flex justify-end gap-2">
+          <button onClick={onClose} className="px-5 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 text-sm">Cancelar</button>
+          <button onClick={sendReply} disabled={sending} className="px-5 py-2.5 rounded-xl font-bold text-white bg-[#5c29c2] hover:bg-[#7c3aed] text-sm disabled:opacity-50">
+            {sending ? "Enviando..." : "Enviar Respuesta"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
