@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
 
 function useInView(ref: React.RefObject<HTMLElement>) {
   const [inView, setInView] = useState(false);
@@ -32,6 +33,142 @@ function AccordionItem({ title, children }: { title: string; children: React.Rea
         </svg>
       </button>
       {open && <div className="px-5 pb-5 bg-white border-t border-gray-100">{children}</div>}
+    </div>
+  );
+}
+
+const downloadableResources = [
+  { img: "/images/primeros-auxilios-individual-1.png", title: "Primeros auxilios en crisis epilépticas", desc: "Guía visual para crisis convulsivas" },
+  { img: "/images/primeros-auxilios-individual-2.png", title: "Primeros auxilios en crisis de ausencia y crisis focales", desc: "Guía visual para crisis no convulsivas" },
+];
+
+function DownloadGate() {
+  const [unlocked, setUnlocked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ nombre: "", apellido: "", email: "", _hp: "" });
+  const startTime = useRef(Date.now());
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+
+    // Anti-bot: honeypot & timer
+    if (form._hp) return;
+    if (Date.now() - startTime.current < 3000) {
+      setError("Por favor, esperá unos segundos antes de enviar.");
+      return;
+    }
+
+    if (!form.nombre.trim() || !form.apellido.trim() || !form.email.trim()) {
+      setError("Todos los campos son obligatorios.");
+      return;
+    }
+    if (!/^[^@]+@[^@]+\.[^@]+$/.test(form.email)) {
+      setError("Ingresá un email válido.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error: dbError } = await supabase.from("resource_downloads").insert({
+        nombre: form.nombre.trim(),
+        apellido: form.apellido.trim(),
+        email: form.email.trim(),
+        recurso: "primeros-auxilios",
+      });
+      if (dbError) throw dbError;
+
+      // Sync to Perfit list 41 (fire-and-forget)
+      fetch("/api/perfit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email.trim(),
+          nombre: form.nombre.trim(),
+          apellido: form.apellido.trim(),
+          list: "primeros-auxilios",
+        }),
+      }).catch(() => {});
+
+      setUnlocked(true);
+    } catch {
+      setError("Hubo un error al procesar tu solicitud. Intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (unlocked) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {downloadableResources.map(({ img, title, desc }) => (
+          <FadeIn key={title}>
+            <div className="bg-white border border-[#5c29c2]/15 rounded-2xl overflow-hidden hover:-translate-y-1 transition-all hover:shadow-lg">
+              <div className="bg-white p-4 flex items-center justify-center h-48 overflow-hidden">
+                <img src={img} alt={title} className="h-full w-auto object-contain" />
+              </div>
+              <div className="p-5">
+                <h3 className="font-bold text-sm mb-1 text-gray-900 uppercase tracking-wide">{title}</h3>
+                <p className="text-xs text-gray-500 mb-4">{desc}</p>
+                <a href={img} download target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#5c29c2] text-white font-bold px-5 py-2 rounded-xl text-sm hover:bg-[#7c3aed] transition-all">
+                  ↓ Descargar
+                </a>
+              </div>
+            </div>
+          </FadeIn>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-[#f5f0ff] border border-[#5c29c2]/15 rounded-2xl p-8">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-3xl">📋</span>
+        <div>
+          <h3 className="font-extrabold text-lg text-gray-900">Completá tus datos para descargar</h3>
+          <p className="text-sm text-gray-500">Dejanos tu información para habilitar la descarga de las guías de primeros auxilios.</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        {/* Honeypot */}
+        <input type="text" name="_hp" value={form._hp} onChange={e => setForm({ ...form, _hp: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Nombre *</label>
+            <input type="text" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#5c29c2] focus:ring-2 focus:ring-[#5c29c2]/20 outline-none transition-all text-sm"
+              placeholder="Tu nombre" required />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">Apellido *</label>
+            <input type="text" value={form.apellido} onChange={e => setForm({ ...form, apellido: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#5c29c2] focus:ring-2 focus:ring-[#5c29c2]/20 outline-none transition-all text-sm"
+              placeholder="Tu apellido" required />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">Email *</label>
+          <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#5c29c2] focus:ring-2 focus:ring-[#5c29c2]/20 outline-none transition-all text-sm"
+            placeholder="tu@email.com" required />
+        </div>
+
+        {error && <p className="text-red-600 text-sm font-semibold bg-red-50 px-4 py-2 rounded-xl">{error}</p>}
+
+        <button type="submit" disabled={loading}
+          className="w-full md:w-auto bg-[#5c29c2] text-white font-bold px-8 py-3 rounded-full text-sm hover:bg-[#7c3aed] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+          {loading ? (
+            <><span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> Enviando...</>
+          ) : (
+            <>📥 Habilitar descarga</>
+          )}
+        </button>
+      </form>
     </div>
   );
 }
@@ -250,35 +387,14 @@ export default function PrimerosAuxiliosPage() {
         </div>
       </section>
 
-      {/* INFOGRAFÍAS DESCARGABLES */}
+      {/* INFOGRAFÍAS DESCARGABLES - FORMULARIO GATED */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl font-extrabold tracking-tight mb-3">Herramientas para descargar</h2>
-            <p className="text-gray-500 mb-8 leading-relaxed">Descargalas, compartilas, imprimilas, hacé folletos y etiquetanos.</p>
+            <p className="text-gray-500 mb-8 leading-relaxed">Descargá nuestras guías visuales de primeros auxilios en crisis epilépticas. Compartilas, imprimilas o hacé folletos para tu comunidad.</p>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { img: "/images/primeros-auxilios-individual-1.png", title: "Primeros auxilios en crisis epilépticas", desc: "Guía visual para crisis convulsivas" },
-              { img: "/images/primeros-auxilios-individual-2.png", title: "Primeros auxilios en crisis de ausencia y crisis focales", desc: "Guía visual para crisis no convulsivas" },
-            ].map(({ img, title, desc }) => (
-              <FadeIn key={title}>
-                <div className="bg-white border border-[#5c29c2]/15 rounded-2xl overflow-hidden hover:-translate-y-1 transition-all hover:shadow-lg">
-                  <div className="bg-white p-4 flex items-center justify-center h-48 overflow-hidden">
-                    <img src={img} alt={title} className="h-full w-auto object-contain" />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-sm mb-1 text-gray-900 uppercase tracking-wide">{title}</h3>
-                    <p className="text-xs text-gray-500 mb-4">{desc}</p>
-                    <a href={img} download target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-[#5c29c2] text-white font-bold px-5 py-2 rounded-xl text-sm hover:bg-[#7c3aed] transition-all">
-                      ↓ Descargar
-                    </a>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+          <DownloadGate />
         </div>
       </section>
 

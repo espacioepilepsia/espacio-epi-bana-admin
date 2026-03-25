@@ -73,7 +73,15 @@ function NewsletterForm() {
     if (!email.includes("@")) { setStatus("err"); return; }
     const { error } = await supabase.from("newsletter_subscribers").insert({ email });
     setStatus(error ? "err" : "ok");
-    if (!error) setEmail("");
+    if (!error) {
+      // Sync to Perfit list 37 (fire-and-forget)
+      fetch("/api/perfit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, list: "newsletter" }),
+      }).catch(() => {});
+      setEmail("");
+    }
   }
 
   return (
@@ -134,7 +142,10 @@ export default function Footer() {
             </h2>
             <p className="text-white/70">Suscribite para enterarte de todas las novedades</p>
           </div>
-          <NewsletterForm />
+          <div>
+            <p className="text-sm font-bold text-white/90 uppercase tracking-widest mb-3">📬 Suscribite al newsletter</p>
+            <NewsletterForm />
+          </div>
         </div>
       </div>
 

@@ -143,7 +143,7 @@ export default function InformacionPage() {
           <FadeIn>
             <h2 className="text-3xl font-extrabold tracking-tight mb-6">¿Qué es una crisis de epilepsia?</h2>
             <div className="bg-[#f5f0ff] rounded-2xl p-6 mb-8 border border-[#5c29c2]/10">
-              <p className="text-sm text-[#5c29c2] font-bold mb-2">Según la Dra. Ma. del Carmen García</p>
+              <p className="text-sm text-[#5c29c2] font-bold mb-2">Según la Organización Mundial de la Salud (OMS)</p>
               <p className="text-base text-gray-600 leading-relaxed italic">"Una crisis de epilepsia es un cuadro clínico que se produce por una descarga eléctrica anormal de las neuronas, que puede manifestarse de diferentes formas dependiendo del lugar del cerebro donde se originan. La más conocida es la convulsión tonico-clónica generalizada, pero puede haber otros tipos como las crisis de ausencias."</p>
             </div>
             <h3 className="font-bold text-lg mb-4">Tipos de crisis más comunes</h3>
@@ -168,7 +168,7 @@ export default function InformacionPage() {
               <div className="flex justify-center w-full">
                 <iframe
                   className="w-full aspect-video rounded-2xl shadow-lg border border-gray-100"
-                  src="https://www.youtube.com/embed/vgRU4xeZ0v4"
+                  src="https://www.youtube.com/embed/mt7XmwJlcpY"
                   title="Video explicativo sobre qué es la epilepsia"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen

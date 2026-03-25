@@ -74,7 +74,7 @@ export default function CongresosPage() {
               {playing ? (
                 <iframe
                   className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube.com/embed/oq21HaG76kI?autoplay=1"
+                  src="https://www.youtube.com/embed/videoseries?list=PLNYKlmuv1fjvtmf0fEqRF57AqTervQRv3"
                   title="Espacio Epilepsia"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

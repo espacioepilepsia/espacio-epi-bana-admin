@@ -31,6 +31,13 @@ export function NewsletterForm() {
         return;
       }
 
+      // Sync to Perfit (fire-and-forget)
+      fetch("/api/perfit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed, list: "newsletter" }),
+      }).catch(() => {});
+
       setEmail("");
       setSuccess(true);
     } catch (err) {

@@ -94,25 +94,42 @@ const faqs = [
   },
 ];
 
-const tagColors: Record<string, { bg: string; text: string }> = {
-  "Básico": { bg: "bg-blue-50", text: "text-blue-700" },
-  "Diagnóstico": { bg: "bg-purple-50", text: "text-purple-700" },
-  "Causas": { bg: "bg-orange-50", text: "text-orange-700" },
-  "Tratamiento": { bg: "bg-green-50", text: "text-green-700" },
-  "Crisis": { bg: "bg-red-50", text: "text-red-700" },
-  "Vida cotidiana": { bg: "bg-teal-50", text: "text-teal-700" },
-  "Embarazo": { bg: "bg-pink-50", text: "text-pink-700" },
-  "SUDEP": { bg: "bg-gray-100", text: "text-gray-700" },
-  "Derechos": { bg: "bg-yellow-50", text: "text-yellow-700" },
+const tagColors: Record<string, { bg: string; text: string; bar: string }> = {
+  "Básico": { bg: "bg-blue-50", text: "text-blue-700", bar: "bg-blue-600" },
+  "Diagnóstico": { bg: "bg-purple-50", text: "text-purple-700", bar: "bg-purple-600" },
+  "Causas": { bg: "bg-orange-50", text: "text-orange-700", bar: "bg-orange-600" },
+  "Tratamiento": { bg: "bg-green-50", text: "text-green-700", bar: "bg-green-600" },
+  "Crisis": { bg: "bg-red-50", text: "text-red-700", bar: "bg-red-600" },
+  "Vida cotidiana": { bg: "bg-teal-50", text: "text-teal-700", bar: "bg-teal-600" },
+  "Embarazo": { bg: "bg-pink-50", text: "text-pink-700", bar: "bg-pink-600" },
+  "SUDEP": { bg: "bg-gray-100", text: "text-gray-700", bar: "bg-gray-600" },
+  "Derechos": { bg: "bg-yellow-50", text: "text-yellow-700", bar: "bg-yellow-600" },
 };
 
 const allTags = ["Todos", ...Array.from(new Set(faqs.map(f => f.tag)))];
 
 export default function PreguntasFrecuentesPage() {
-  const [open, setOpen] = useState<number | null>(null);
+  const [openSet, setOpenSet] = useState<Set<number>>(new Set());
   const [filter, setFilter] = useState("Todos");
 
   const filtered = filter === "Todos" ? faqs : faqs.filter(f => f.tag === filter);
+
+  function toggleItem(i: number) {
+    setOpenSet(prev => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  }
+
+  function openAll() {
+    setOpenSet(new Set(filtered.map((_, i) => i)));
+  }
+
+  function closeAll() {
+    setOpenSet(new Set());
+  }
 
   return (
     <main>
@@ -142,9 +159,9 @@ export default function PreguntasFrecuentesPage() {
 
       {/* FILTROS */}
       <div className="bg-white border-b border-gray-100 sticky top-[72px] z-40">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex gap-2 flex-wrap">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex gap-2 flex-wrap items-center">
           {allTags.map(tag => (
-            <button key={tag} onClick={() => { setFilter(tag); setOpen(null); }}
+            <button key={tag} onClick={() => { setFilter(tag); setOpenSet(new Set()); }}
               className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${filter === tag ? "bg-[#5c29c2] text-white border-[#5c29c2]" : "bg-white text-gray-500 border-gray-200 hover:border-[#5c29c2] hover:text-[#5c29c2]"}`}>
               {tag}
             </button>
@@ -155,26 +172,41 @@ export default function PreguntasFrecuentesPage() {
 
       <section className="py-12 px-6 bg-white min-h-[50vh]">
         <div className="max-w-4xl mx-auto">
+          {/* Open All / Close All - Estilo FSMB */}
+          <div className="flex justify-end gap-3 mb-4">
+            <button onClick={openAll} className="text-sm font-bold text-[#5c29c2] hover:underline transition-all">
+              Abrir todo
+            </button>
+            <span className="text-gray-300">/</span>
+            <button onClick={closeAll} className="text-sm font-bold text-[#5c29c2] hover:underline transition-all">
+              Cerrar todo
+            </button>
+          </div>
+
           <FadeIn>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-[2px]">
               {filtered.map((faq, i) => {
-                const isOpen = open === i;
-                const tc = tagColors[faq.tag] ?? { bg: "bg-gray-100", text: "text-gray-600" };
+                const isOpen = openSet.has(i);
+                const tc = tagColors[faq.tag] ?? { bg: "bg-gray-100", text: "text-gray-600", bar: "bg-gray-600" };
                 return (
-                  <div key={i} className={`border rounded-2xl overflow-hidden transition-all ${isOpen ? "border-[#5c29c2] shadow-sm" : "border-gray-100 hover:border-[#5c29c2]/30"}`}>
-                    <button onClick={() => setOpen(isOpen ? null : i)}
-                      className="w-full flex items-center justify-between gap-4 p-5 text-left bg-white">
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5 ${tc.bg} ${tc.text}`}>{faq.tag}</span>
-                        <span className="font-bold text-base text-gray-900 leading-snug">{faq.q}</span>
+                  <div key={i} className="overflow-hidden">
+                    {/* Barra sólida violeta - Estilo FSMB */}
+                    <button onClick={() => toggleItem(i)}
+                      className={`w-full flex items-center justify-between gap-4 px-6 py-4 text-left transition-all ${
+                        isOpen ? "bg-[#4a1fa3]" : "bg-[#5c29c2] hover:bg-[#4a1fa3]"
+                      } ${i === 0 ? "rounded-t-xl" : ""} ${i === filtered.length - 1 && !isOpen ? "rounded-b-xl" : ""}`}>
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 bg-white/20 text-white/90`}>{faq.tag}</span>
+                        <span className="font-bold text-[15px] text-white leading-snug">{faq.q}</span>
                       </div>
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                        className={`flex-shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180 text-[#5c29c2]" : "text-gray-400"}`}>
-                        <path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        className={`flex-shrink-0 transition-transform duration-300 text-white ${isOpen ? "rotate-180" : ""}`}>
+                        <path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </button>
-                    {isOpen && (
-                      <div className="px-5 pb-5 bg-white border-t border-gray-100 pt-4 text-sm text-gray-700 leading-relaxed">
+                    {/* Contenido expandible */}
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
+                      <div className="bg-[#f5f0ff] px-6 py-5 text-sm text-gray-700 leading-relaxed border-x border-b border-[#5c29c2]/10">
                         {faq.a && <p>{faq.a}</p>}
                         {faq.items && (
                           <ul className="space-y-2 mt-2">
@@ -187,8 +219,8 @@ export default function PreguntasFrecuentesPage() {
                           </ul>
                         )}
                         {faq.note && (
-                          <div className="mt-3 bg-[#f5f0ff] rounded-xl px-4 py-3">
-                            <p className="text-[#5c29c2] font-semibold">{faq.note}</p>
+                          <div className="mt-3 bg-white rounded-xl px-4 py-3 border border-[#5c29c2]/10">
+                            <p className="text-[#5c29c2] font-semibold text-sm">{faq.note}</p>
                           </div>
                         )}
                         {faq.extra && (
@@ -198,12 +230,12 @@ export default function PreguntasFrecuentesPage() {
                         )}
                         {faq.law && (
                           <a href="https://servicios.infoleg.gob.ar/infolegInternet/anexos/65000-69999/66578/norma.htm" target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-[#5c29c2] hover:underline">
+                            className="inline-flex items-center gap-1.5 mt-2 ml-3 text-xs font-bold text-[#5c29c2] hover:underline">
                             Ver {faq.law} →
                           </a>
                         )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
