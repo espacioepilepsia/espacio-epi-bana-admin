@@ -57,14 +57,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_AR",
-    url: "https://espacioepilepsia.org",
+    url: "https://www.espacioepilepsia.org/",
     siteName: "Espacio Epilepsia",
     title: "Espacio Epilepsia — Epilepsia en primera persona",
     description:
       "Plataforma digital de información, comunidad y contención sobre epilepsia en Argentina. #SinEstigmas",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "https://www.espacioepilepsia.org/images/espacio-epi-OG.png",
         width: 1200,
         height: 630,
         alt: "Espacio Epilepsia — Epilepsia en primera persona",
@@ -75,11 +75,12 @@ export const metadata: Metadata = {
   // Twitter Card
   twitter: {
     card: "summary_large_image",
+    site: "@espacioepilepsia",
+    creator: "@espacioepilepsia",
     title: "Espacio Epilepsia — Epilepsia en primera persona",
     description:
-      "Plataforma digital de información y comunidad sobre epilepsia en Argentina. #SinEstigmas",
-    images: ["/images/og-image.png"],
-    creator: "@espacioepilepsia",
+      "Plataforma digital de información, comunidad y contención sobre epilepsia en Argentina. #SinEstigmas",
+    images: ["https://www.espacioepilepsia.org/images/espacio-epi-OG.png"],
   },
 
   // Robots
@@ -102,12 +103,26 @@ export const metadata: Metadata = {
 
   // App info
   applicationName: "Espacio Epilepsia",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Espacio Epilepsia",
+  },
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon0.svg", type: "image/svg+xml" },
+      { url: "/icon1.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 // =============================================
