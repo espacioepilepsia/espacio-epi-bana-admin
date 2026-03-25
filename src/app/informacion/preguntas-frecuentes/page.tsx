@@ -110,9 +110,8 @@ const allTags = ["Todos", ...Array.from(new Set(faqs.map(f => f.tag)))];
 
 export default function PreguntasFrecuentesPage() {
   const [openSet, setOpenSet] = useState<Set<number>>(new Set());
-  const [filter, setFilter] = useState("Todos");
 
-  const filtered = filter === "Todos" ? faqs : faqs.filter(f => f.tag === filter);
+  const filtered = faqs;
 
   function toggleItem(i: number) {
     setOpenSet(prev => {
@@ -157,19 +156,6 @@ export default function PreguntasFrecuentesPage() {
         </div>
       </section>
 
-      {/* FILTROS */}
-      <div className="bg-white border-b border-gray-100 sticky top-[72px] z-40">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex gap-2 flex-wrap items-center">
-          {allTags.map(tag => (
-            <button key={tag} onClick={() => { setFilter(tag); setOpenSet(new Set()); }}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${filter === tag ? "bg-[#5c29c2] text-white border-[#5c29c2]" : "bg-white text-gray-500 border-gray-200 hover:border-[#5c29c2] hover:text-[#5c29c2]"}`}>
-              {tag}
-            </button>
-          ))}
-          <span className="ml-auto text-xs text-gray-400 self-center">{filtered.length} pregunta{filtered.length !== 1 ? "s" : ""}</span>
-        </div>
-      </div>
-
       <section className="py-12 px-6 bg-white min-h-[50vh]">
         <div className="max-w-4xl mx-auto">
           {/* Open All / Close All - Estilo FSMB */}
@@ -187,7 +173,6 @@ export default function PreguntasFrecuentesPage() {
             <div className="flex flex-col gap-[2px]">
               {filtered.map((faq, i) => {
                 const isOpen = openSet.has(i);
-                const tc = tagColors[faq.tag] ?? { bg: "bg-gray-100", text: "text-gray-600", bar: "bg-gray-600" };
                 return (
                   <div key={i} className="overflow-hidden">
                     {/* Barra sólida violeta - Estilo FSMB */}
@@ -196,7 +181,6 @@ export default function PreguntasFrecuentesPage() {
                         isOpen ? "bg-[#4a1fa3]" : "bg-[#5c29c2] hover:bg-[#4a1fa3]"
                       } ${i === 0 ? "rounded-t-xl" : ""} ${i === filtered.length - 1 && !isOpen ? "rounded-b-xl" : ""}`}>
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 bg-white/20 text-white/90`}>{faq.tag}</span>
                         <span className="font-bold text-[15px] text-white leading-snug">{faq.q}</span>
                       </div>
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
