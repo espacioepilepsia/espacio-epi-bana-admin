@@ -16,7 +16,7 @@ const navItems = [
   { href: "/epipanel/mensajes", label: "Mensajes", icon: "📩", perm: 'can_mensajes' },
   { href: "/epipanel/historias", label: "Historias", icon: "💬", perm: 'can_historias' },
   { href: "/epipanel/comunidad", label: "Comunidad", icon: "🗣️", perm: 'can_comunidad' },
-  { href: "/epipanel/descargas", label: "Descargas", icon: "📥", perm: 'can_descargas' },
+  { href: "/epipanel/descargas", label: "Leads", icon: "📊", perm: 'can_descargas' },
   { href: "/epipanel/usuarios", label: "Usuarios", icon: "🛡️", perm: 'is_admin' },
   { href: "/epipanel/configuracion", label: "Configuración", icon: "⚙️", perm: 'is_admin' },
 ];
