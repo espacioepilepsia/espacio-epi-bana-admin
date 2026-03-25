@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import AdminImageUploader from "@/components/AdminImageUploader";
+import Link from "next/link";
 
 type Post = { 
   id: string; 
@@ -163,7 +164,10 @@ export default function AdminBlogPage() {
            <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Central de Blog</h1>
            <p className="text-sm text-gray-500">Recursos y novedades para la comunidad</p>
         </div>
-        <button onClick={() => { setForm(emptyForm); setEditing(null); setShowForm(true); setError(null); }} className="bg-[#5c29c2] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:shadow-lg hover:shadow-[#5c29c2]/20 transition-all">+ Escribir Artículo</button>
+        <div className="flex gap-3">
+          <Link href="/epipanel/blog/comentarios" className="bg-amber-50 text-amber-700 border border-amber-200 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-amber-100 transition-all">💬 Comentarios</Link>
+          <button onClick={() => { setForm(emptyForm); setEditing(null); setShowForm(true); setError(null); }} className="bg-[#5c29c2] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:shadow-lg hover:shadow-[#5c29c2]/20 transition-all">+ Escribir Artículo</button>
+        </div>
       </div>
 
       {showForm && (
@@ -280,6 +284,7 @@ export default function AdminBlogPage() {
                   </div>
                </div>
                <div className="flex items-center gap-4 mt-4 md:mt-0">
+                  <Link href={`/epipanel/blog/comentarios?post_id=${p.id}`} className="p-3 bg-blue-50 text-blue-600 hover:text-blue-700 hover:bg-blue-100 rounded-xl transition-all font-bold text-sm">💬 Ver comentarios</Link>
                   <button onClick={() => handleEdit(p)} className="p-3 bg-gray-50 text-gray-400 hover:text-[#5c29c2] hover:bg-[#f5f0ff] rounded-xl transition-all font-bold text-sm">Editar</button>
                   <button onClick={() => handleDelete(p.id)} className="p-3 text-red-300 hover:text-red-500 rounded-xl transition-all">
                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeLinecap="round" strokeLinejoin="round"></path></svg>

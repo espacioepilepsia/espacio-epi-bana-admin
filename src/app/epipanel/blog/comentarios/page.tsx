@@ -29,21 +29,35 @@ export default function CommentsPage() {
 
   async function load() {
     setLoading(true);
-    let query = supabase
-      .from("post_comments")
-      .select("*, posts(title, slug)")
-      .order("created_at", { ascending: false });
+    try {
+      const url = new URL("/api/comments/pending", window.location.origin);
+      if (filterPostId) {
+        url.searchParams.append("post_id", filterPostId);
+      }
 
-    if (filterPostId) {
-      query = query.eq("post_id", filterPostId);
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        console.error("Failed to fetch comments, status:", response.status);
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Error response:", errorData);
+        setComments([]);
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await response.json();
+      setComments(data ?? []);
+    } catch (error) {
+      console.error("Error loading comments:", error);
+      setComments([]);
     }
-
-    const { data } = await query;
-    setComments(data ?? []);
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [filterPostId]);
+  useEffect(() => { 
+    load(); 
+  }, [filterPostId]);
 
   async function updateStatus(id: string, status: Comment["status"]) {
     setActionLoading(id + status);
