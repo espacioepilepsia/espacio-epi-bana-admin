@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CommentForm from "@/components/CommentForm";
 
 type Post = {
   id: string;
@@ -16,6 +17,13 @@ type Post = {
   category: string;
   published_at: string | null;
   author: string | null;
+};
+
+type Comment = {
+  id: string;
+  author_name: string;
+  body: string;
+  created_at: string;
 };
 
 type Props = { params: Promise<{ slug: string }> };
@@ -80,6 +88,16 @@ export default async function BlogPostPage({ params }: Props) {
     .single<Post>();
 
   if (!post) notFound();
+
+  // Fetch approved comments
+  const { data: comments } = await supabase
+    .from("post_comments")
+    .select("id, author_name, body, created_at")
+    .eq("post_id", post.id)
+    .eq("status", "approved")
+    .order("created_at", { ascending: true });
+
+  const approvedComments: Comment[] = comments ?? [];
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -221,6 +239,49 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </div>
         </article>
+
+        {/* COMMENTS SECTION */}
+        <section className="py-12 px-6 bg-[#f9f7ff] border-t border-gray-100">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
+              Comentarios{" "}
+              {approvedComments.length > 0 && (
+                <span className="text-[#5c29c2]">({approvedComments.length})</span>
+              )}
+            </h2>
+            <p className="text-sm text-gray-500 mb-8">Los comentarios son moderados antes de publicarse.</p>
+
+            {/* List of approved comments */}
+            {approvedComments.length > 0 ? (
+              <div className="space-y-5 mb-10">
+                {approvedComments.map((c) => (
+                  <div key={c.id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-9 h-9 rounded-full bg-[#5c29c2]/10 text-[#5c29c2] font-extrabold flex items-center justify-center text-sm">
+                        {c.author_name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{c.author_name}</p>
+                        <p className="text-xs text-gray-400">{formatDate(c.created_at)}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{c.body}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-8 text-center mb-10">
+                <p className="text-gray-400 text-sm">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
+              </div>
+            )}
+
+            {/* Comment form */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+              <h3 className="font-extrabold text-gray-900 text-lg mb-5">Dejá tu comentario</h3>
+              <CommentForm postId={post.id} postSlug={slug} postTitle={post.title} />
+            </div>
+          </div>
+        </section>
 
         <Footer />
       </main>
