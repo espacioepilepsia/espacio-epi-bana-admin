@@ -91,6 +91,16 @@ function DownloadGate() {
         }),
       }).catch(() => {});
 
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "espacioepilepsia.arg@gmail.com",
+          subject: "Formulario Web Descargable",
+          text: `Nueva descarga de recurso de Primeros Auxilios:\nNombre: ${form.nombre} ${form.apellido}\nEmail: ${form.email}`,
+        }),
+      }).catch(() => {});
+
       setUnlocked(true);
     } catch {
       setError("Hubo un error al procesar tu solicitud. Intentá de nuevo.");

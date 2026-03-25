@@ -38,6 +38,16 @@ export function NewsletterForm() {
         body: JSON.stringify({ email: trimmed, list: "newsletter" }),
       }).catch(() => {});
 
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "espacioepilepsia.arg@gmail.com",
+          subject: "Formulario Web Newsletter",
+          text: `Nuevo registro en Newsletter:\nEmail: ${trimmed}`,
+        }),
+      }).catch(() => {});
+
       setEmail("");
       setSuccess(true);
     } catch (err) {

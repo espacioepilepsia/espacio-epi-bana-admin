@@ -53,9 +53,20 @@ export default function TuHistoriaPage() {
       accepted_terms: form.terms // Changed from form.accepted_terms to form.terms
     });
     setStatus(error ? "err" : "ok");
-    if (!error) setForm({ 
-      name: "", age: "", email: "", instagram: "", location: "", relationship: "", story: "", terms: false, honeypot: "" // Reset honeypot and terms
-    });
+    if (!error) {
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "espacioepilepsia.arg@gmail.com",
+          subject: "Formulario Web Tu Historia",
+          text: `Nueva historia enviada:\nNombre: ${form.name}\nEmail: ${form.email}\nEdad: ${form.age}\nHistoria: ${form.story}`,
+        }),
+      }).catch(() => {});
+      setForm({ 
+        name: "", age: "", email: "", instagram: "", location: "", relationship: "", story: "", terms: false, honeypot: "" // Reset honeypot and terms
+      });
+    }
   }
 
   return (

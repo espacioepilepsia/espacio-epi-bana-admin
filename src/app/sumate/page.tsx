@@ -35,7 +35,18 @@ export default function SumatePage() {
       message: `QUIERO SUMARME: ${form.message}`
     });
     setStatus(error ? "err" : "ok");
-    if (!error) setForm({ name: "", email: "", phone: "", location: "", experience: "", message: "", honeypot: "" });
+    if (!error) {
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "espacioepilepsia.arg@gmail.com",
+          subject: "Formulario Web Sumate",
+          text: `Nueva postulación en Sumate:\nNombre: ${form.name}\nEmail: ${form.email}\nCiudad/País: ${form.location}\nExp: ${form.experience}\nMensaje: ${form.message}`,
+        }),
+      }).catch(() => {});
+      setForm({ name: "", email: "", phone: "", location: "", experience: "", message: "", honeypot: "" });
+    }
   }
 
   const areas = [

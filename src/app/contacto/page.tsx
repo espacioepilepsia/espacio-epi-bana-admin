@@ -27,18 +27,34 @@ export default function ContactoPage() {
     setStatus("loading");
     const { error } = await supabase.from("contact_messages").insert({ name: form.name, email: form.email, phone: form.phone || null, message: form.message || null });
     setStatus(error ? "err" : "ok");
-    if (!error) setForm({ name: "", email: "", phone: "", message: "", honeypot: "" });
+    if (!error) {
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "espacioepilepsia.arg@gmail.com",
+          subject: "Formulario Web Contacto",
+          text: `Nuevo mensaje de Contacto:\nNombre: ${form.name}\nEmail: ${form.email}\nTel: ${form.phone}\nMensaje: ${form.message}`,
+        }),
+      }).catch(() => {});
+      setForm({ name: "", email: "", phone: "", message: "", honeypot: "" });
+    }
   }
 
   return (
     <main>
 <Navbar />
-       
-      <section className="pt-[70px]" style={{ background: "#5c29c2" }}>
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-3">Escribinos</p>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Contacto</h1>
-          <p className="text-lg text-white/70 max-w-xl leading-relaxed">¿Tenés una consulta, querés colaborar o simplemente decir hola? Estamos acá.</p>
+      <div className="bg-[#5c29c2] pt-[72px]">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <Link href="/" className="text-white/80 text-sm hover:text-white transition-colors inline-flex items-center gap-1 font-medium">← Volver al Inicio</Link>
+        </div>
+      </div>
+
+      <section className="py-12 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+          <p className="text-xs font-bold text-[#5c29c2] uppercase tracking-widest mb-3">Escribinos</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">Contacto</h1>
+          <p className="text-lg text-gray-600 max-w-xl mx-auto leading-relaxed text-center">¿Tenés una consulta, querés colaborar o simplemente decir hola? Estamos acá.</p>
         </div>
       </section>
 

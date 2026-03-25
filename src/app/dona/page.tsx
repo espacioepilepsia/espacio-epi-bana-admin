@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PaymentModal from "@/components/PaymentModal";
 
 function useInView(ref: React.RefObject<HTMLElement>) {
   const [inView, setInView] = useState(false);
@@ -21,11 +22,7 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   return <div ref={ref} style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms` }}>{children}</div>;
 }
 
-const donationOptions = [
-  { icon: "🔄", title: "Donación mensual", desc: "Acompañanos todo el año con un aporte recurrente. Con tu apoyo podemos planificar mejor nuestras actividades a largo plazo.", cta: "Donar mensualmente", href: "https://linktr.ee/espacioepilepsia" },
-  { icon: "❤️", title: "Donación única", desc: "Cualquier monto suma y marca la diferencia. Vos elegís cuándo y cuánto donar.", cta: "Hacer donación", href: "https://linktr.ee/espacioepilepsia" },
-  { icon: "✉️", title: "Otras formas", desc: "Donación en especie, servicios profesionales o patrocinio institucional.", cta: "Escribinos", href: "mailto:contacto@espacioepilepsia.org" },
-];
+
 
 const impactRows = [
   { amount: "$20.000", desc: "Ayudanos a desarrollar un video testimonial sobre epilepsia, compartiendo experiencias reales que inspiran a otros" },
@@ -34,6 +31,8 @@ const impactRows = [
 ];
 
 export default function DonaPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <main>
       <Navbar />
@@ -75,18 +74,46 @@ export default function DonaPage() {
           <FadeIn delay={100}>
             <h2 className="text-2xl font-extrabold mb-6 text-center">Formas de donar</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              {donationOptions.map(({ icon, title, desc, cta, href }, i) => (
-                <div key={title} className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col shadow-sm hover:border-[#5c29c2]/30 hover:shadow-md transition-all">
-                  <div className="text-4xl mb-4">{icon}</div>
-                  <h3 className="font-extrabold text-lg mb-2">{title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">{desc}</p>
-                  <a href={href} target={href.startsWith("mailto") ? undefined : "_blank"} rel="noopener noreferrer"
-                    className="block text-center font-bold py-3 rounded-xl transition-all text-sm"
-                    style={{ background: "#29f0b4", color: "#5c29c2" }}>
-                    {cta} →
-                  </a>
+              
+              {/* Card 1: Mensual */}
+              <div className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col shadow-sm hover:border-[#5c29c2]/30 hover:shadow-md transition-all">
+                <div className="text-4xl mb-4">🔄</div>
+                <h3 className="font-extrabold text-lg mb-2">Donación mensual</h3>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">Acompañanos todo el año con un aporte recurrente en Cafecito. Con tu apoyo podemos planificar a largo plazo.</p>
+                <a href="https://cafecito.app/espacioepilepsia" target="_blank" rel="noopener noreferrer"
+                  className="block text-center font-bold py-3 rounded-xl transition-all text-sm"
+                  style={{ background: "#29f0b4", color: "#5c29c2" }}>
+                  Suscribirse →
+                </a>
+              </div>
+              
+              {/* Card 2: Unica */}
+              <div className="bg-white border border-[#5c29c2]/30 rounded-2xl p-6 flex flex-col shadow-lg ring-2 ring-[#5c29c2]/10 hover:border-[#5c29c2]/60 hover:shadow-xl transition-all relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#5c29c2] text-[#29f0b4] text-[10px] font-extrabold px-3 py-1 rounded-full tracking-widest uppercase shadow-sm">
+                  ✨ Recomendado
                 </div>
-              ))}
+                <div className="text-4xl mb-4">❤️</div>
+                <h3 className="font-extrabold text-lg mb-2">Donación única</h3>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">Cualquier monto suma. Elegí entre Mercado Pago, Cafecito o transferencia bancaria.</p>
+                <button onClick={() => setIsModalOpen(true)}
+                  className="block text-center font-bold py-3 rounded-xl transition-all text-sm w-full"
+                  style={{ background: "#29f0b4", color: "#5c29c2" }}>
+                  Ver opciones de pago →
+                </button>
+              </div>
+
+              {/* Card 3: Otras formas */}
+              <div className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col shadow-sm hover:border-[#5c29c2]/30 hover:shadow-md transition-all">
+                <div className="text-4xl mb-4">🤝</div>
+                <h3 className="font-extrabold text-lg mb-2">Otras formas de donar</h3>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">Explorá otras formas de colaborar como empresas, voluntarios o alianzas estratégicas.</p>
+                <Link href="/contacto"
+                  className="block text-center font-bold py-3 rounded-xl transition-all text-sm"
+                  style={{ background: "#29f0b4", color: "#5c29c2" }}>
+                  Contactanos →
+                </Link>
+              </div>
+
             </div>
           </FadeIn>
 
@@ -166,6 +193,7 @@ export default function DonaPage() {
       </section>
 
       <Footer />
+      <PaymentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>
   );
 }

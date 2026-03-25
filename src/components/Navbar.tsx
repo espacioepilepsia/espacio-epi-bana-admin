@@ -53,7 +53,7 @@ function DropdownItem({ item }: { item: typeof menu[0] }) {
     return (
       <li>
         <Link href={item.href}
-          className={`text-[15px] font-semibold px-4 py-2 rounded-lg transition-all block whitespace-nowrap ${isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
+          className={`text-base font-semibold px-5 py-2.5 rounded-lg transition-all block whitespace-nowrap ${isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
             }`}>
           {item.label}
         </Link>
@@ -64,7 +64,7 @@ function DropdownItem({ item }: { item: typeof menu[0] }) {
   return (
     <li ref={ref} className="relative">
       <button onClick={() => setOpen(!open)}
-        className={`text-[15px] font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1 whitespace-nowrap ${isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
+        className={`text-base font-semibold px-5 py-2.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap ${isActive ? "text-white bg-white/20" : "text-white/85 hover:text-white hover:bg-white/15"
           }`}>
         {item.label}
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
@@ -112,22 +112,22 @@ export default function Navbar() {
 
       <nav className="fixed top-0 left-0 right-0 z-50 transition-shadow duration-300"
         style={{ background: "#5c29c2", boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.25)" : "none" }}>
-        <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center gap-8">
+        <div className="max-w-7xl mx-auto px-6 h-[88px] flex items-center justify-between gap-6">
 
           {/* LOGO — más grande y pegado al menú */}
           <Link href="/" className="flex-shrink-0 flex items-center">
             <Image
               src="/images/logo.png"
               alt="Espacio Epilepsia"
-              width={200}
-              height={60}
-              className="h-14 w-auto"
+              width={240}
+              height={72}
+              className="h-[60px] md:h-[68px] w-auto"
               priority
             />
           </Link>
 
           {/* DESKTOP MENU — centrado */}
-          <ul className="hidden lg:flex items-center gap-1 list-none flex-1">
+          <ul className="hidden lg:flex items-center justify-center gap-3 list-none flex-1">
             {menu.map((item) => (
               <DropdownItem key={item.href} item={item} />
             ))}
@@ -135,7 +135,7 @@ export default function Navbar() {
 
           {/* DONÁ — botón destacado al final */}
           <Link href="/dona"
-            className="hidden lg:inline-flex items-center gap-2 font-bold text-[16px] px-6 py-2.5 rounded-full transition-all flex-shrink-0"
+            className="hidden lg:inline-flex items-center gap-2 font-bold text-[17px] px-8 py-3 rounded-full transition-all flex-shrink-0"
             style={{ background: "#29f0b4", color: "#5c29c2" }}
             onMouseEnter={e => (e.currentTarget.style.background = "#1dd9a0")}
             onMouseLeave={e => (e.currentTarget.style.background = "#29f0b4")}>
