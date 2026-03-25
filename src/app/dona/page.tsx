@@ -75,23 +75,8 @@ export default function DonaPage() {
             <h2 className="text-2xl font-extrabold mb-6 text-center">Formas de donar</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               
-              {/* Card 1: Mensual */}
+              {/* Card 1: Unica */}
               <div className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col shadow-sm hover:border-[#5c29c2]/30 hover:shadow-md transition-all">
-                <div className="text-4xl mb-4">🔄</div>
-                <h3 className="font-extrabold text-lg mb-2">Donación mensual</h3>
-                <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">Acompañanos todo el año con un aporte recurrente en Cafecito. Con tu apoyo podemos planificar a largo plazo.</p>
-                <a href="https://cafecito.app/espacioepilepsia" target="_blank" rel="noopener noreferrer"
-                  className="block text-center font-bold py-3 rounded-xl transition-all text-sm"
-                  style={{ background: "#29f0b4", color: "#5c29c2" }}>
-                  Suscribirse →
-                </a>
-              </div>
-              
-              {/* Card 2: Unica */}
-              <div className="bg-white border border-[#5c29c2]/30 rounded-2xl p-6 flex flex-col shadow-lg ring-2 ring-[#5c29c2]/10 hover:border-[#5c29c2]/60 hover:shadow-xl transition-all relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#5c29c2] text-[#29f0b4] text-[10px] font-extrabold px-3 py-1 rounded-full tracking-widest uppercase shadow-sm">
-                  ✨ Recomendado
-                </div>
                 <div className="text-4xl mb-4">❤️</div>
                 <h3 className="font-extrabold text-lg mb-2">Donación única</h3>
                 <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">Cualquier monto suma. Elegí entre Mercado Pago, Cafecito o transferencia bancaria.</p>
@@ -100,6 +85,21 @@ export default function DonaPage() {
                   style={{ background: "#29f0b4", color: "#5c29c2" }}>
                   Ver opciones de pago →
                 </button>
+              </div>
+
+              {/* Card 2: Mensual (Recomendado) */}
+              <div className="bg-white border border-[#5c29c2]/30 rounded-2xl p-6 flex flex-col shadow-lg ring-2 ring-[#5c29c2]/10 hover:border-[#5c29c2]/60 hover:shadow-xl transition-all relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#5c29c2] text-[#29f0b4] text-[10px] font-extrabold px-3 py-1 rounded-full tracking-widest uppercase shadow-sm">
+                  ✨ Recomendado
+                </div>
+                <div className="text-4xl mb-4">🔄</div>
+                <h3 className="font-extrabold text-lg mb-2">Donación mensual</h3>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-6">Acompañanos todo el año con un aporte recurrente en Cafecito. Con tu apoyo podemos planificar a largo plazo.</p>
+                <a href="https://cafecito.app/espacioepilepsia" target="_blank" rel="noopener noreferrer"
+                  className="block text-center font-bold py-3 rounded-xl transition-all text-sm"
+                  style={{ background: "#29f0b4", color: "#5c29c2" }}>
+                  Suscribirse →
+                </a>
               </div>
 
               {/* Card 3: Otras formas */}
