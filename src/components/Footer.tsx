@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 type SocialLinks = {
   instagram: string;
@@ -75,7 +76,7 @@ function NewsletterForm() {
     setStatus(error ? "err" : "ok");
     if (!error) {
       // Sync to Perfit list 37 (fire-and-forget)
-      fetch("/api/perfit", {
+      fetch(EDGE_FUNCTIONS.perfit, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, list: "newsletter" }),

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 type Comment = {
   id: string;
@@ -30,7 +31,7 @@ export default function CommentsPage() {
   async function load() {
     setLoading(true);
     try {
-      const url = new URL("/api/comments/pending", window.location.origin);
+      const url = new URL(EDGE_FUNCTIONS.pendingComments);
       if (filterPostId) {
         url.searchParams.append("post_id", filterPostId);
       }

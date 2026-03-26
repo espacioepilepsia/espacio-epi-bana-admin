@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 function useInView(ref: React.RefObject<HTMLElement>) {
   const [inView, setInView] = useState(false);
@@ -80,7 +81,7 @@ function DownloadGate() {
       if (dbError) throw dbError;
 
       // Sync to Perfit list 41 (fire-and-forget)
-      fetch("/api/perfit", {
+      fetch(EDGE_FUNCTIONS.perfit, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,7 +92,7 @@ function DownloadGate() {
         }),
       }).catch(() => {});
 
-      fetch("/api/send-email", {
+      fetch(EDGE_FUNCTIONS.sendEmail, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

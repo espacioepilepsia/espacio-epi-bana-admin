@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 export default function SumatePage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", location: "", experience: "", message: "", honeypot: "" });
@@ -36,7 +37,7 @@ export default function SumatePage() {
     });
     setStatus(error ? "err" : "ok");
     if (!error) {
-      fetch("/api/send-email", {
+      fetch(EDGE_FUNCTIONS.sendEmail, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

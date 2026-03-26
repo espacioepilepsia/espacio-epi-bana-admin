@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 interface CommentFormProps {
   postId: string;
@@ -25,7 +26,7 @@ export default function CommentForm({ postId, postSlug, postTitle }: CommentForm
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/comments", {
+      const res = await fetch(EDGE_FUNCTIONS.createComment, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

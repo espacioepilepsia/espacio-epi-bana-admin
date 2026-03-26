@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -32,13 +33,13 @@ export function NewsletterForm() {
       }
 
       // Sync to Perfit (fire-and-forget)
-      fetch("/api/perfit", {
+      fetch(EDGE_FUNCTIONS.perfit, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: trimmed, list: "newsletter" }),
       }).catch(() => {});
 
-      fetch("/api/send-email", {
+      fetch(EDGE_FUNCTIONS.sendEmail, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

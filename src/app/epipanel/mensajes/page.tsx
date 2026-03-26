@@ -2,6 +2,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { EDGE_FUNCTIONS } from "@/lib/edge-functions";
 
 type Message = { id: string; name: string; email: string; phone: string | null; message: string | null; is_read: boolean; created_at: string; };
 
@@ -111,7 +112,7 @@ function ReplyModal({ msg, onClose }: { msg: Message, onClose: () => void }) {
     if (!text.trim()) return;
     setSending(true);
     try {
-      const res = await fetch("/api/send-email", {
+      const res = await fetch(EDGE_FUNCTIONS.sendEmail, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
