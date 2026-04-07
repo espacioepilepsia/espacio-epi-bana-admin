@@ -6,7 +6,7 @@ export default function AdminImageUploader({
   value,
   onChange,
   className = "",
-  label = "Subir Imagen (.png)",
+  label = "Subir Imagen (.png, se convierte a .webp)",
 }: {
   value: string;
   onChange: (url: string) => void;
@@ -16,6 +16,56 @@ export default function AdminImageUploader({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const MAX_SIZE_MB = 2;
+  const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+  const convertPngToWebp = async (file: File): Promise<Blob> => {
+    const imageUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.decoding = "async";
+
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("No se pudo procesar la imagen seleccionada."));
+      img.src = imageUrl;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      URL.revokeObjectURL(imageUrl);
+      throw new Error("No se pudo inicializar el procesador de imágenes.");
+    }
+
+    ctx.drawImage(img, 0, 0);
+
+    const qualitySteps = [0.92, 0.85, 0.78, 0.7, 0.62, 0.55, 0.5];
+    let lastBlob: Blob | null = null;
+
+    for (const quality of qualitySteps) {
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((result) => resolve(result), "image/webp", quality);
+      });
+
+      if (!blob) {
+        URL.revokeObjectURL(imageUrl);
+        throw new Error("Tu navegador no pudo convertir la imagen a WebP.");
+      }
+
+      lastBlob = blob;
+      if (blob.size <= MAX_SIZE_BYTES) {
+        URL.revokeObjectURL(imageUrl);
+        return blob;
+      }
+    }
+
+    URL.revokeObjectURL(imageUrl);
+    if (!lastBlob) throw new Error("No se pudo convertir la imagen.");
+    return lastBlob;
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,14 +77,6 @@ export default function AdminImageUploader({
     // 1. Validar extensión PNG
     if (file.type !== "image/png") {
       setError("Solo se permiten archivos en formato .png");
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
-
-    // 2. Validar peso máximo (Ejemplo: 2MB)
-    const MAX_SIZE_MB = 2;
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError(`La imagen pesa demasiado. El límite es de ${MAX_SIZE_MB}MB.`);
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -52,14 +94,28 @@ export default function AdminImageUploader({
     setUploading(true);
 
     try {
+      // Convertimos PNG -> WebP y validamos tamaño final
+      const webpBlob = await convertPngToWebp(file);
+      if (webpBlob.size > MAX_SIZE_BYTES) {
+        setError(`La imagen sigue pesando demasiado incluso optimizada. El límite es de ${MAX_SIZE_MB}MB.`);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      const webpFile = new File(
+        [webpBlob],
+        `${file.name.replace(/\.[^.]+$/, "")}.webp`,
+        { type: "image/webp" }
+      );
+
       // Usar fecha/tiempo para crear un nombre único y evitar sobrescribir (caché)
-      const fileExt = file.name.split(".").pop();
+      const fileExt = "webp";
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `images/${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("uploads")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, webpFile, { upsert: true });
 
       if (uploadError) {
         throw uploadError;
@@ -73,8 +129,12 @@ export default function AdminImageUploader({
       const url = publicUrlData.publicUrl;
       onChange(url);
 
-    } catch (err: any) {
-      setError(err.message || "Ocurrió un error inesperado al subir la imagen");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Ocurrió un error inesperado al subir la imagen";
+      setError(message);
     } finally {
       setUploading(false);
       // Reset input para permitir subir la misma imagen en caso de error
