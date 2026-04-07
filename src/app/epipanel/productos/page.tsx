@@ -68,7 +68,7 @@ export default function AdminProductosPage() {
               </select></div>
             <div className="md:col-span-2">
               <label className="text-xs font-semibold text-gray-600 mb-1 block">Imagen del Producto</label>
-              <AdminImageUploader value={form.image_url} onChange={(url) => setForm({...form, image_url: url})} label="Subir Imagen de Producto (.png)" />
+              <AdminImageUploader value={form.image_url} onChange={(url) => setForm({...form, image_url: url})} label="Subir Imagen de Producto (.png, optimizada a .webp)" />
             </div>
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Link Mercado Pago</label>
               <input value={form.mercadopago_url} onChange={e => setForm({...form, mercadopago_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://mpago.la/..." /></div>
