@@ -4,7 +4,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import AdminImageUploader from "@/components/AdminImageUploader";
 
-type Product = { id: string; name: string; price: number; category: string; is_active: boolean; display_order: number; };
+type Product = {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  image_url: string | null;
+  mercadopago_url: string | null;
+  category: string;
+  is_active: boolean;
+  display_order: number;
+};
 type FormData = { name: string; description: string; price: string; image_url: string; mercadopago_url: string; category: string; is_active: boolean; display_order: string; };
 const emptyForm: FormData = { name: "", description: "", price: "", image_url: "", mercadopago_url: "", category: "general", is_active: true, display_order: "0" };
 
@@ -21,7 +31,10 @@ export default function AdminProductosPage() {
   const [saving, setSaving] = useState(false);
 
   async function load() {
-    const { data } = await supabase.from("products").select("id,name,price,category,is_active,display_order").order("display_order");
+    const { data } = await supabase
+      .from("products")
+      .select("id,name,description,price,image_url,mercadopago_url,category,is_active,display_order")
+      .order("display_order");
     setProducts(data ?? []); setLoading(false);
   }
   useEffect(() => { load(); }, []);
@@ -41,7 +54,16 @@ export default function AdminProductosPage() {
   }
 
   function handleEdit(p: Product) {
-    setForm({ name: p.name, description: "", price: p.price.toString(), image_url: "", mercadopago_url: "", category: p.category, is_active: p.is_active, display_order: p.display_order.toString() });
+    setForm({
+      name: p.name,
+      description: p.description ?? "",
+      price: p.price.toString(),
+      image_url: p.image_url ?? "",
+      mercadopago_url: p.mercadopago_url ?? "",
+      category: p.category,
+      is_active: p.is_active,
+      display_order: p.display_order.toString(),
+    });
     setEditing(p.id); setShowForm(true);
   }
 
