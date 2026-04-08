@@ -29,6 +29,7 @@ export default function AdminProductosPage() {
   const [editing, setEditing] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   async function load() {
     const { data } = await supabase
@@ -41,10 +42,34 @@ export default function AdminProductosPage() {
 
   async function handleSave() {
     if (!form.name || !form.price) return;
+    if (imageUploading) {
+      alert("Esperá a que termine la subida de la imagen antes de guardar.");
+      return;
+    }
+    const parsedPrice = parseFloat(form.price);
+    if (Number.isNaN(parsedPrice)) {
+      alert("Ingresá un precio válido.");
+      return;
+    }
     setSaving(true);
-    const data = { name: form.name, description: form.description || null, price: parseFloat(form.price), image_url: form.image_url || null, mercadopago_url: form.mercadopago_url || null, category: form.category, is_active: form.is_active, display_order: parseInt(form.display_order) || 0 };
-    if (editing) { await supabase.from("products").update(data).eq("id", editing); }
-    else { await supabase.from("products").insert(data); }
+    const data = {
+      name: form.name.trim(),
+      description: form.description.trim() || null,
+      price: parsedPrice,
+      image_url: form.image_url.trim() || null,
+      mercadopago_url: form.mercadopago_url.trim() || null,
+      category: form.category,
+      is_active: form.is_active,
+      display_order: parseInt(form.display_order) || 0,
+    };
+    const { error } = editing
+      ? await supabase.from("products").update(data).eq("id", editing)
+      : await supabase.from("products").insert(data);
+    if (error) {
+      alert(`No se pudo guardar el producto: ${error.message}`);
+      setSaving(false);
+      return;
+    }
     setForm(emptyForm); setEditing(null); setShowForm(false); setSaving(false); load();
   }
 
@@ -90,7 +115,12 @@ export default function AdminProductosPage() {
               </select></div>
             <div className="md:col-span-2">
               <label className="text-xs font-semibold text-gray-600 mb-1 block">Imagen del Producto</label>
-              <AdminImageUploader value={form.image_url} onChange={(url) => setForm({...form, image_url: url})} label="Subir Imagen de Producto (.png, optimizada a .webp)" />
+              <AdminImageUploader
+                value={form.image_url}
+                onChange={(url) => setForm({ ...form, image_url: url })}
+                onUploadingChange={setImageUploading}
+                label="Subir Imagen de Producto (.png, optimizada a .webp)"
+              />
             </div>
             <div><label className="text-xs font-semibold text-gray-600 mb-1 block">Link Mercado Pago</label>
               <input value={form.mercadopago_url} onChange={e => setForm({...form, mercadopago_url: e.target.value})} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#5c29c2]" placeholder="https://mpago.la/..." /></div>
@@ -105,7 +135,7 @@ export default function AdminProductosPage() {
             </div>
           </div>
           <div className="flex gap-3 mt-5">
-            <button onClick={handleSave} disabled={saving} className="bg-[#5c29c2] text-white font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all disabled:opacity-50">{saving ? "Guardando..." : "Guardar"}</button>
+            <button onClick={handleSave} disabled={saving || imageUploading} className="bg-[#5c29c2] text-white font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all disabled:opacity-50">{imageUploading ? "Subiendo imagen..." : saving ? "Guardando..." : "Guardar"}</button>
             <button onClick={() => { setShowForm(false); setEditing(null); }} className="bg-gray-100 text-gray-600 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-gray-200 transition-all">Cancelar</button>
           </div>
         </div>
