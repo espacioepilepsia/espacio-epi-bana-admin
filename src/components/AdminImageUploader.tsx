@@ -5,11 +5,13 @@ import { supabase } from "@/lib/supabase";
 export default function AdminImageUploader({
   value,
   onChange,
+  onUploadingChange,
   className = "",
   label = "Subir Imagen (.png, se convierte a .webp)",
 }: {
   value: string;
   onChange: (url: string) => void;
+  onUploadingChange?: (uploading: boolean) => void;
   className?: string;
   label?: string;
 }) {
@@ -92,6 +94,7 @@ export default function AdminImageUploader({
     // });
 
     setUploading(true);
+    onUploadingChange?.(true);
 
     try {
       // Convertimos PNG -> WebP y validamos tamaño final
@@ -137,6 +140,7 @@ export default function AdminImageUploader({
       setError(message);
     } finally {
       setUploading(false);
+      onUploadingChange?.(false);
       // Reset input para permitir subir la misma imagen en caso de error
       if (fileInputRef.current) fileInputRef.current.value = "";
     }

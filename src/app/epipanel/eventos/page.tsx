@@ -29,6 +29,7 @@ export default function AdminEventosPage() {
   const [editing, setEditing] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   async function load() {
     const { data } = await supabase
@@ -43,6 +44,10 @@ export default function AdminEventosPage() {
 
   async function handleSave() {
     if (!form.title || !form.event_date) return;
+    if (imageUploading) {
+      alert("Esperá a que termine la subida de la imagen antes de guardar.");
+      return;
+    }
     setSaving(true);
     const payload = {
       title: form.title.trim(),
@@ -133,7 +138,12 @@ export default function AdminEventosPage() {
             </div>
             <div className="md:col-span-2">
               <label className="text-xs font-semibold text-gray-600 mb-1 block">URL imagen</label>
-              <AdminImageUploader value={form.image_url} onChange={(url) => setForm({...form, image_url: url})} label="Subir Imagen de Evento (.png)" />
+              <AdminImageUploader
+                value={form.image_url}
+                onChange={(url) => setForm({ ...form, image_url: url })}
+                onUploadingChange={setImageUploading}
+                label="Subir Imagen de Evento (.png)"
+              />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-600 mb-1 block">URL inscripción</label>
@@ -150,9 +160,9 @@ export default function AdminEventosPage() {
             </div>
           </div>
           <div className="flex gap-3 mt-5">
-            <button onClick={handleSave} disabled={saving}
+            <button onClick={handleSave} disabled={saving || imageUploading}
               className="bg-[#5c29c2] text-white font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all disabled:opacity-50">
-              {saving ? "Guardando..." : editing ? "Guardar cambios" : "Crear evento"}
+              {imageUploading ? "Subiendo imagen..." : saving ? "Guardando..." : editing ? "Guardar cambios" : "Crear evento"}
             </button>
             <button onClick={() => { setShowForm(false); setEditing(null); setForm(emptyForm); }}
               className="bg-gray-100 text-gray-600 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-gray-200 transition-all">
