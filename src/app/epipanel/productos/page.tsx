@@ -1,6 +1,6 @@
 // RUTA: src/app/admin/productos/page.tsx
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import AdminImageUploader from "@/components/AdminImageUploader";
 
@@ -30,6 +30,7 @@ export default function AdminProductosPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
+  const latestImageUrlRef = useRef("");
 
   async function load() {
     const { data } = await supabase
@@ -56,7 +57,7 @@ export default function AdminProductosPage() {
       name: form.name.trim(),
       description: form.description.trim() || null,
       price: parsedPrice,
-      image_url: form.image_url.trim() || null,
+      image_url: (latestImageUrlRef.current || form.image_url).trim() || null,
       mercadopago_url: form.mercadopago_url.trim() || null,
       category: form.category,
       is_active: form.is_active,
@@ -71,6 +72,7 @@ export default function AdminProductosPage() {
       return;
     }
     setForm(emptyForm); setEditing(null); setShowForm(false); setSaving(false); load();
+    latestImageUrlRef.current = "";
   }
 
   async function handleDelete(id: string) {
@@ -79,6 +81,7 @@ export default function AdminProductosPage() {
   }
 
   function handleEdit(p: Product) {
+    latestImageUrlRef.current = p.image_url ?? "";
     setForm({
       name: p.name,
       description: p.description ?? "",
@@ -96,7 +99,7 @@ export default function AdminProductosPage() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div><h1 className="text-2xl font-extrabold text-gray-900 mb-1">Tienda</h1><p className="text-sm text-gray-500">{products.length} productos</p></div>
-        <button onClick={() => { setForm(emptyForm); setEditing(null); setShowForm(true); }} className="bg-[#5c29c2] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all">+ Nuevo producto</button>
+        <button onClick={() => { setForm(emptyForm); setEditing(null); latestImageUrlRef.current = ""; setShowForm(true); }} className="bg-[#5c29c2] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#7c3aed] transition-all">+ Nuevo producto</button>
       </div>
 
       {showForm && (
@@ -117,7 +120,7 @@ export default function AdminProductosPage() {
               <label className="text-xs font-semibold text-gray-600 mb-1 block">Imagen del Producto</label>
               <AdminImageUploader
                 value={form.image_url}
-                onChange={(url) => setForm({ ...form, image_url: url })}
+                onChange={(url) => { latestImageUrlRef.current = url; setForm({ ...form, image_url: url }); }}
                 onUploadingChange={setImageUploading}
                 label="Subir Imagen de Producto (.png, optimizada a .webp)"
               />
