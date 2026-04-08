@@ -95,6 +95,11 @@ export default function EventosPage() {
                 return (
                   <FadeIn key={ev.id} delay={i * 80}>
                     <div className="flex gap-5 items-center p-6 border-[1.5px] border-[#5c29c2]/10 rounded-2xl hover:border-[#5c29c2] hover:bg-[#f5f0ff] transition-all">
+                      {ev.image_url && (
+                        <div className="w-24 h-24 rounded-xl overflow-hidden border border-[#5c29c2]/15 bg-white flex-shrink-0">
+                          <img src={ev.image_url} alt={ev.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
                       <div className="bg-[#f5f0ff] border border-[#5c29c2]/15 rounded-xl p-3 text-center min-w-[72px] flex-shrink-0">
                         <div className="text-2xl font-extrabold text-[#5c29c2] leading-none">{date.day}</div>
                         <div className="text-xs font-bold text-[#5c29c2] uppercase tracking-wide mt-0.5">{date.month}</div>

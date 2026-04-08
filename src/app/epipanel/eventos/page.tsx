@@ -4,7 +4,16 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import AdminImageUploader from "@/components/AdminImageUploader";
 
-type Event = { id: string; title: string; event_date: string; location: string | null; is_published: boolean; };
+type Event = {
+  id: string;
+  title: string;
+  description: string | null;
+  event_date: string;
+  location: string | null;
+  image_url: string | null;
+  registration_url: string | null;
+  is_published: boolean;
+};
 type FormData = { title: string; description: string; event_date: string; location: string; image_url: string; registration_url: string; is_published: boolean; };
 
 const emptyForm: FormData = { title: "", description: "", event_date: "", location: "", image_url: "", registration_url: "", is_published: false };
@@ -22,7 +31,10 @@ export default function AdminEventosPage() {
   const [saving, setSaving] = useState(false);
 
   async function load() {
-    const { data } = await supabase.from("events").select("id,title,event_date,location,is_published").order("event_date", { ascending: false });
+    const { data } = await supabase
+      .from("events")
+      .select("id,title,description,event_date,location,image_url,registration_url,is_published")
+      .order("event_date", { ascending: false });
     setEvents(data ?? []);
     setLoading(false);
   }
@@ -51,7 +63,15 @@ export default function AdminEventosPage() {
   }
 
   function handleEdit(ev: Event) {
-    setForm({ title: ev.title, description: "", event_date: ev.event_date.slice(0, 16), location: ev.location ?? "", image_url: "", registration_url: "", is_published: ev.is_published });
+    setForm({
+      title: ev.title,
+      description: ev.description ?? "",
+      event_date: ev.event_date.slice(0, 16),
+      location: ev.location ?? "",
+      image_url: ev.image_url ?? "",
+      registration_url: ev.registration_url ?? "",
+      is_published: ev.is_published,
+    });
     setEditing(ev.id);
     setShowForm(true);
   }
