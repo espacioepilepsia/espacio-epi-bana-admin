@@ -44,11 +44,26 @@ export default function AdminEventosPage() {
   async function handleSave() {
     if (!form.title || !form.event_date) return;
     setSaving(true);
-    if (editing) {
-      await supabase.from("events").update({ ...form }).eq("id", editing);
-    } else {
-      await supabase.from("events").insert({ ...form });
+    const payload = {
+      title: form.title.trim(),
+      description: form.description.trim() || null,
+      event_date: form.event_date,
+      location: form.location.trim() || null,
+      image_url: form.image_url.trim() || null,
+      registration_url: form.registration_url.trim() || null,
+      is_published: form.is_published,
+    };
+
+    const { error } = editing
+      ? await supabase.from("events").update(payload).eq("id", editing)
+      : await supabase.from("events").insert(payload);
+
+    if (error) {
+      alert(`No se pudo guardar el evento: ${error.message}`);
+      setSaving(false);
+      return;
     }
+
     setForm(emptyForm);
     setEditing(null);
     setShowForm(false);
